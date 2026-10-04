@@ -1,0 +1,2580 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>The Cheapskate Cheat Sheet</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%92%B5%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --board-bg: #E9DFC8;
+    --board-bg-2: #DED2B4;
+    --board-dot: rgba(43,35,24,0.06);
+    --board-ink: #2B2318;
+    --board-ink-soft: rgba(43,35,24,0.62);
+    --paper: #FBF6EA;
+    --paper-border: rgba(43,35,24,0.14);
+    --paper-shadow: rgba(43,35,24,0.20);
+    --ink: #2B2318;
+    --ink-soft: #6B6151;
+    --accent-primary: #B8710E;
+    --accent-primary-ink: #FBF6EA;
+    --accent-active: #2F6B41;
+    --accent-expiring: #C13B23;
+    --accent-upcoming: #2F5E7A;
+    --accent-expired: #8C8370;
+    --focus-ring: #2F5E7A;
+    --card-radius: 14px;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --board-bg: #16261D;
+      --board-bg-2: #1D3226;
+      --board-dot: rgba(255,255,255,0.05);
+      --board-ink: #F3EEDF;
+      --board-ink-soft: rgba(243,238,223,0.66);
+      --paper: #F7F1DE;
+      --paper-border: rgba(0,0,0,0.14);
+      --paper-shadow: rgba(0,0,0,0.5);
+      --ink: #2B2318;
+      --ink-soft: #6B6151;
+      --accent-primary: #E8A93D;
+      --accent-primary-ink: #2B2318;
+      --accent-active: #4C9A61;
+      --accent-expiring: #E2543A;
+      --accent-upcoming: #4C8AAE;
+      --accent-expired: #9C9483;
+      --focus-ring: #E8A93D;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --board-bg: #16261D;
+    --board-bg-2: #1D3226;
+    --board-dot: rgba(255,255,255,0.05);
+    --board-ink: #F3EEDF;
+    --board-ink-soft: rgba(243,238,223,0.66);
+    --paper: #F7F1DE;
+    --paper-border: rgba(0,0,0,0.14);
+    --paper-shadow: rgba(0,0,0,0.5);
+    --ink: #2B2318;
+    --ink-soft: #6B6151;
+    --accent-primary: #E8A93D;
+    --accent-primary-ink: #2B2318;
+    --accent-active: #4C9A61;
+    --accent-expiring: #E2543A;
+    --accent-upcoming: #4C8AAE;
+    --accent-expired: #9C9483;
+    --focus-ring: #E8A93D;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background-color: var(--board-bg);
+    background-image:
+      radial-gradient(circle, var(--board-dot) 1px, transparent 1px),
+      radial-gradient(ellipse at top, var(--board-bg-2), transparent 60%);
+    background-size: 26px 26px, 100% 100%;
+    color: var(--board-ink);
+    font-family: 'Work Sans', system-ui, -apple-system, sans-serif;
+    min-height: 100%;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  *:focus-visible {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  .board {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 40px 24px calc(64px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .board-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+  }
+  .board-header h1 {
+    font-family: 'Alfa Slab One', Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(1.9rem, 4.5vw, 2.6rem);
+    margin: 0 0 8px;
+    color: var(--board-ink);
+  }
+  .subtitle {
+    margin: 0;
+    color: var(--board-ink-soft);
+    font-size: 1rem;
+    max-width: 46ch;
+    line-height: 1.5;
+  }
+
+  .btn-primary {
+    background: var(--accent-primary);
+    color: var(--accent-primary-ink);
+    border: none;
+    border-radius: 999px;
+    padding: 13px 24px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    box-shadow: 0 8px 18px var(--paper-shadow);
+    white-space: nowrap;
+  }
+  .btn-primary:hover { filter: brightness(1.06); }
+  .btn-primary:active { filter: brightness(0.97); }
+
+  .stats-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .stat-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(127,127,127,0.10);
+    border: 1px solid var(--board-dot);
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 0.86rem;
+    color: var(--board-ink-soft);
+  }
+  .stat-dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+
+  .view-switch {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid var(--board-dot);
+    color: var(--board-ink-soft);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 0.87rem;
+    font-weight: 500;
+    line-height: 1.2;
+    text-align: center;
+    cursor: pointer;
+  }
+  .tab.active {
+    background: var(--board-ink);
+    color: var(--board-bg);
+    border-color: var(--board-ink);
+  }
+  .sort-select {
+    background: var(--paper);
+    color: var(--ink);
+    border: 1px solid var(--paper-border);
+    padding: 9px 14px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 0.87rem;
+    cursor: pointer;
+  }
+  .select-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .overview-controls {
+    display: flex;
+    align-items: end;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: -2px 0 24px;
+    padding: 14px;
+    background: rgba(251, 246, 234, 0.38);
+    border: 1px solid var(--board-dot);
+    border-radius: 14px;
+  }
+  .overview-controls[hidden] { display: none; }
+  .overview-field { display: grid; gap: 5px; min-width: 140px; flex: 1 1 140px; }
+  .overview-field label {
+    color: var(--board-ink-soft);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .overview-controls .sort-select { width: 100%; }
+  .overview-field.sort-field { flex-basis: 180px; }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+  }
+  .grid[hidden] { display: none; }
+
+  .deal-card {
+    position: relative;
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: var(--card-radius);
+    border: 1px solid var(--paper-border);
+    border-left: 6px solid var(--rank-color, var(--paper-border));
+    padding: 22px 20px 16px 24px;
+    box-shadow: 0 10px 24px var(--paper-shadow);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .deal-card:hover, .deal-card:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px var(--paper-shadow);
+  }
+  .deal-card::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: 12px;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: var(--board-bg);
+    box-shadow: inset 0 0 0 2px var(--paper-border);
+    z-index: 1;
+  }
+  .deal-card.used { opacity: 0.62; }
+  .deal-card.used .card-title { text-decoration: line-through; }
+
+  .card-image {
+    display: block;
+    width: calc(100% + 44px);
+    max-height: 140px;
+    object-fit: cover;
+    margin: -22px -20px 14px -24px;
+    pointer-events: none;
+  }
+
+  .card-shop {
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0 0 6px;
+  }
+  .card-title {
+    font-family: 'Alfa Slab One', Georgia, serif;
+    font-weight: 400;
+    font-size: 1.35rem;
+    line-height: 1.2;
+    margin: 0 0 12px;
+    color: var(--ink);
+    word-break: break-word;
+  }
+  .card-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .card-status {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 5px 11px;
+    border-radius: 999px;
+    color: var(--status-color);
+    background: color-mix(in srgb, var(--status-color) 14%, transparent);
+  }
+  .discount-badge {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 5px 11px;
+    border-radius: 999px;
+    color: var(--accent-primary);
+    background: color-mix(in srgb, var(--accent-primary) 16%, transparent);
+  }
+  .rank-badge {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 5px 11px;
+    border-radius: 999px;
+    color: var(--ink);
+    background: var(--rank-color);
+  }
+  .rank-picker { display: flex; flex-wrap: wrap; gap: 8px; }
+  .rank-option {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--rank-color) 30%, var(--paper));
+    border: 1px solid color-mix(in srgb, var(--rank-color) 65%, transparent);
+    font-size: 0.85rem;
+    color: var(--ink);
+    cursor: pointer;
+    min-width: 112px;
+    text-align: center;
+  }
+  .rank-option input { accent-color: var(--rank-color); cursor: pointer; }
+  .rank-option:has(input:checked) {
+    background: var(--rank-color);
+    border-color: color-mix(in srgb, var(--rank-color) 70%, black 15%);
+    font-weight: 600;
+  }
+  .card-category {
+    display: inline-block;
+    font-size: 0.8rem;
+    padding: 5px 11px;
+    border-radius: 999px;
+    color: var(--ink-soft);
+    background: rgba(127,127,127,0.14);
+  }
+  .card-notes {
+    margin: 0 0 6px;
+    font-size: 0.86rem;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+  .card-actions {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--paper-border);
+  }
+  .used-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+  }
+  .used-toggle input { cursor: pointer; }
+  .link-btn {
+    background: none;
+    border: none;
+    color: var(--ink-soft);
+    font-family: inherit;
+    font-size: 0.82rem;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+  }
+  .link-btn:hover { color: var(--ink); }
+  .link-btn.danger:hover { color: var(--accent-expiring); }
+
+  .empty-state, .filtered-empty {
+    text-align: center;
+    padding: 70px 20px;
+    color: var(--board-ink-soft);
+  }
+  .empty-state h2, .filtered-empty h2 {
+    font-family: 'Alfa Slab One', Georgia, serif;
+    font-weight: 400;
+    font-size: 1.4rem;
+    margin: 0 0 10px;
+    color: var(--board-ink);
+  }
+  .empty-state p, .filtered-empty p { margin: 0 0 18px; }
+
+  /* ---- calendar view ---- */
+  .calendar-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .calendar-controls[hidden],
+  .calendar-wrap[hidden] { display: none; }
+  .calendar-controls h2 {
+    font-family: 'Alfa Slab One', Georgia, serif;
+    font-weight: 400;
+    font-size: 1.15rem;
+    margin: 0;
+    color: var(--board-ink);
+    min-width: 180px;
+    text-align: center;
+  }
+  .btn-ghost {
+    background: none;
+    border: 1px solid var(--paper-border);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 0.88rem;
+    padding: 9px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .btn-ghost.on-board { border-color: var(--board-dot); color: var(--board-ink); }
+
+  .calendar-panel {
+    background: var(--paper);
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 10px 24px var(--paper-shadow);
+    overflow-x: auto;
+  }
+  .cal-day-header {
+    text-align: center;
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    padding: 3px 0;
+    font-weight: 500;
+    position: relative;
+    z-index: 2;
+  }
+  .cal-weekday {
+    display: block;
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+  .cal-date-number {
+    display: block;
+    line-height: 1.25;
+  }
+  .cal-weekend-band {
+    background: color-mix(in srgb, var(--accent-primary) 11%, transparent);
+    border-radius: 5px;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .cal-day-header.today { color: var(--accent-primary); font-weight: 700; }
+  .cal-cell-label {
+    position: sticky;
+    left: 0;
+    background: var(--paper);
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    font-size: 0.83rem;
+    font-weight: 600;
+    color: var(--ink);
+    border-radius: 8px;
+    z-index: 2;
+  }
+  .cal-bar {
+    position: relative;
+    z-index: 1;
+    border-radius: 8px;
+    padding: 3px 9px;
+    font-size: 0.74rem;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--rank-color, var(--paper-border));
+    border: 1px solid color-mix(in srgb, var(--rank-color, var(--paper-border)) 70%, var(--ink));
+    font-family: inherit;
+    text-align: left;
+  }
+  .cal-bar.used { opacity: 0.5; }
+  .cal-bar.used .cal-bar-text { text-decoration: line-through; }
+  .cal-bar-img {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    object-fit: cover;
+    flex: none;
+    margin-right: 6px;
+  }
+  .cal-bar-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .calendar-empty { text-align: center; padding: 50px 20px; color: var(--board-ink-soft); }
+
+  /* ---- modals ---- */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10,10,10,0.55);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 50;
+    display: flex;
+  }
+  .modal-overlay[hidden] { display: none; }
+  .modal {
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: 18px;
+    padding: 28px;
+    width: 100%;
+    max-width: 460px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 24px 70px rgba(0,0,0,0.4);
+    position: relative;
+  }
+  .modal h2 {
+    font-family: 'Alfa Slab One', Georgia, serif;
+    font-weight: 400;
+    font-size: 1.3rem;
+    margin: 0 0 18px;
+    color: var(--ink);
+  }
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-bottom: 5px;
+  }
+  .field input, .field select, .field textarea {
+    width: 100%;
+    font-family: inherit;
+    font-size: 0.95rem;
+    padding: 10px 12px;
+    border-radius: 9px;
+    border: 1px solid var(--paper-border);
+    background: rgba(255,255,255,0.5);
+    color: var(--ink);
+  }
+  .field textarea { resize: vertical; min-height: 60px; }
+  .field-row { display: flex; gap: 12px; }
+  .field-row .field { flex: 1; }
+  .form-error {
+    background: color-mix(in srgb, var(--accent-expiring) 14%, transparent);
+    color: var(--accent-expiring);
+    padding: 10px 12px;
+    border-radius: 9px;
+    font-size: 0.85rem;
+    margin-bottom: 14px;
+  }
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 6px;
+  }
+
+  .paste-zone {
+    border: 1px dashed var(--paper-border);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+  }
+  .paste-zone-hint { font-size: 0.84rem; color: var(--ink-soft); }
+  .image-picker-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  .image-picker-actions .btn-ghost {
+    min-height: 42px;
+  }
+  .paste-zone img {
+    display: block;
+    max-width: 100%;
+    max-height: 160px;
+    border-radius: 8px;
+    margin: 0 auto 8px;
+    object-fit: cover;
+  }
+
+  /* view popup */
+  .close-x {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--ink-soft);
+    cursor: pointer;
+    padding: 4px;
+  }
+  .close-x:hover { color: var(--ink); }
+  .view-image {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: none;
+    object-fit: contain;
+    border-radius: 12px;
+    margin-bottom: 16px;
+  }
+  #viewModal {
+    width: max-content;
+    min-width: min(460px, calc(100vw - 40px));
+    max-width: calc(100vw - 40px);
+    max-height: calc(100vh - 40px);
+    overflow: auto;
+  }
+  .view-title {
+    font-family: 'Alfa Slab One', Georgia, serif;
+    font-weight: 400;
+    font-size: 1.5rem;
+    margin: 0 0 12px;
+    color: var(--ink);
+    padding-right: 24px;
+  }
+  .view-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--paper-border);
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .view-actions .right { display: flex; gap: 16px; }
+
+  .toolbar-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .confirm-modal { max-width: 380px; }
+  .confirm-message {
+    margin: 0 0 20px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+  .btn-primary.danger-btn {
+    background: var(--accent-expiring);
+    color: #fff;
+  }
+  .modal-overlay.confirm-overlay { z-index: 70; }
+
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: calc(28px + env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
+    background: var(--board-ink);
+    color: var(--board-bg);
+    padding: 12px 20px;
+    border-radius: 999px;
+    font-size: 0.88rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    z-index: 60;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+
+  @media (max-width: 560px) {
+    .board { padding: 28px 16px 56px; }
+    .controls { flex-direction: column; align-items: stretch; }
+    .sort-select { width: 100%; }
+    .select-controls { display: grid; grid-template-columns: 1fr; }
+    .overview-controls { display: grid; grid-template-columns: 1fr; }
+    .overview-field { min-width: 0; }
+  }
+</style>
+<style>
+  /* ---------- Price Checker tab (scoped) ---------- */
+  #pricecheckWrap{
+    --pc-color-bg:#efe6cf;
+    --pc-color-surface:#f8f2e3;
+    --pc-color-surface-2:#fbf7ec;
+    --pc-color-text:#232a1f;
+    --pc-color-muted:#6b6248;
+    --pc-color-border:#2c2a1d;
+    --pc-color-accent:#c8952f;
+    --pc-color-good:#3c6b45;
+    --pc-color-good-bg:#e1ead9;
+    --pc-color-bad:#a83a2c;
+    --pc-font-display:'Fraunces',Georgia,'Times New Roman',serif;
+    --pc-font-mono:'IBM Plex Mono','SFMono-Regular',Consolas,monospace;
+    display:block;
+    color:var(--pc-color-text);
+    font-family:var(--pc-font-mono);
+    line-height:1.4;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]) #pricecheckWrap{
+      --pc-color-bg:#101d16;
+      --pc-color-surface:#1a2a20;
+      --pc-color-surface-2:#22352a;
+      --pc-color-text:#ece3c9;
+      --pc-color-muted:#a79f82;
+      --pc-color-border:#ece3c9;
+      --pc-color-accent:#d9ad4f;
+      --pc-color-good:#7cc08c;
+      --pc-color-good-bg:#1f3323;
+      --pc-color-bad:#e08069;
+    }
+  }
+  :root[data-theme="dark"] #pricecheckWrap{
+    --pc-color-bg:#101d16;
+    --pc-color-surface:#1a2a20;
+    --pc-color-surface-2:#22352a;
+    --pc-color-text:#ece3c9;
+    --pc-color-muted:#a79f82;
+    --pc-color-border:#ece3c9;
+    --pc-color-accent:#d9ad4f;
+    --pc-color-good:#7cc08c;
+    --pc-color-good-bg:#1f3323;
+    --pc-color-bad:#e08069;
+  }
+  #pricecheckWrap[hidden]{display:none;}
+
+  .pc-page{max-width:720px;margin:0 auto;padding:0 4px 60px;}
+
+  .pc-masthead{text-align:center;padding:8px 12px 8px;}
+  .pc-masthead h1{font-family:var(--pc-font-display);font-weight:700;font-size:clamp(1.5rem,4.5vw,2.1rem);margin:0 0 10px;color:var(--pc-color-text);}
+  .pc-tagline{color:var(--pc-color-muted);max-width:48ch;margin:0 auto;font-size:.92rem;line-height:1.55;}
+
+  .pc-tab-rail{padding-top:10px;}
+  .pc-tabs{display:flex;flex-wrap:wrap;justify-content:center;gap:24px 16px;list-style:none;margin:0;padding:0;}
+  .pc-tab{
+    position:relative;background:var(--pc-color-surface);border:1.5px solid var(--pc-color-border);
+    border-radius:4px 4px 8px 8px;padding:11px 15px 9px;font-family:var(--pc-font-mono);font-size:.76rem;
+    color:var(--pc-color-text);cursor:pointer;box-shadow:2px 3px 0 rgba(0,0,0,.15);
+    transition:transform .15s ease,background .15s ease,color .15s ease;
+  }
+  .pc-tab::before{content:'';position:absolute;top:-13px;left:50%;transform:translateX(-50%);width:2px;height:13px;background:var(--pc-color-muted);}
+  .pc-tab::after{content:'';position:absolute;top:-18px;left:50%;transform:translateX(-50%);width:7px;height:7px;border-radius:50%;border:1.5px solid var(--pc-color-border);background:var(--pc-color-bg);}
+  .pc-tab:nth-child(odd){transform:rotate(-1deg);}
+  .pc-tab:nth-child(even){transform:rotate(1deg);}
+  .pc-tab:hover{transform:translateY(-2px) rotate(0deg);}
+  .pc-tab.active{background:var(--pc-color-accent);color:#1c1406;transform:translateY(-4px) rotate(0deg);box-shadow:2px 4px 0 rgba(0,0,0,.25);}
+  .pc-tab-icon{margin-right:4px;}
+  .pc-tab:focus-visible{outline:3px solid var(--pc-color-accent);outline-offset:2px;}
+
+  .pc-card{
+    background:var(--pc-color-surface);border:1.5px solid var(--pc-color-border);border-radius:10px;
+    padding:26px 22px 28px;margin-top:26px;box-shadow:3px 4px 0 rgba(0,0,0,.12);
+  }
+
+  .pc-field-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-bottom:6px;}
+  .pc-field-full{grid-column:1/-1;}
+  .pc-field{display:flex;flex-direction:column;gap:6px;font-size:.82rem;color:var(--pc-color-muted);}
+  .pc-field input,.pc-field select{
+    font-family:var(--pc-font-mono);font-size:1rem;padding:10px 11px;border:1.5px solid var(--pc-color-border);
+    border-radius:4px;background:var(--pc-color-surface-2);color:var(--pc-color-text);width:100%;
+  }
+  .pc-field input:focus-visible,.pc-field select:focus-visible{outline:3px solid var(--pc-color-accent);outline-offset:1px;}
+
+  .pc-quantity-toggle{display:flex;flex-direction:column;gap:8px;}
+  .pc-quantity-toggle > span{font-size:.82rem;color:var(--pc-color-muted);}
+  .pc-mode-switch{display:flex;gap:16px;flex-wrap:wrap;}
+  .pc-mode-option{display:flex;align-items:center;gap:6px;font-size:.85rem;color:var(--pc-color-text);cursor:pointer;}
+  .pc-mode-option input[type="radio"]{width:16px;height:16px;accent-color:var(--pc-color-accent);}
+  .pc-mode-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-top:4px;}
+
+  .pc-form-error{color:var(--pc-color-bad);font-size:.83rem;min-height:1.3em;margin:10px 0 4px;}
+
+  .pc-check-btn{
+    width:100%;padding:13px;margin-top:8px;font-family:var(--pc-font-display);font-weight:700;font-size:1.02rem;
+    background:var(--pc-color-accent);color:#1c1406;border:1.5px solid var(--pc-color-border);border-radius:4px;
+    cursor:pointer;box-shadow:2px 2px 0 var(--pc-color-border);transition:transform .1s ease,box-shadow .1s ease;
+  }
+  .pc-check-btn:hover:not(:disabled){transform:translateY(-1px);}
+  .pc-check-btn:active:not(:disabled){transform:translateY(1px);box-shadow:1px 1px 0 var(--pc-color-border);}
+  .pc-check-btn:disabled{opacity:.6;cursor:progress;}
+  .pc-check-btn:focus-visible{outline:3px solid var(--pc-color-text);outline-offset:2px;}
+
+  .pc-result{display:none;margin-top:20px;padding-top:18px;border-top:1px dashed var(--pc-color-border);}
+  .pc-result.visible{display:block;}
+  .pc-stamp{
+    display:inline-block;font-family:var(--pc-font-mono);font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+    padding:7px 16px;border:3px solid;border-radius:6px;transform:rotate(-3deg);font-size:.85rem;
+  }
+  .pc-stamp.good{color:var(--pc-color-good);border-color:var(--pc-color-good);}
+  .pc-stamp.bad{color:var(--pc-color-bad);border-color:var(--pc-color-bad);}
+  .pc-stamp.neutral{color:var(--pc-color-muted);border-color:var(--pc-color-muted);}
+  .pc-result-figure{font-family:var(--pc-font-mono);font-size:1.1rem;margin:14px 0 6px;color:var(--pc-color-text);}
+  .pc-result-detail{color:var(--pc-color-muted);font-size:.88rem;max-width:54ch;margin:0;}
+
+  .pc-divider{border-top:1px dashed var(--pc-color-border);margin:26px 0;}
+
+  .pc-history h2{font-family:var(--pc-font-display);font-size:1.1rem;margin:0 0 12px;color:var(--pc-color-text);}
+  .pc-empty{color:var(--pc-color-muted);font-size:.88rem;}
+  .pc-stats-line{font-size:.83rem;color:var(--pc-color-muted);margin:0 0 14px;}
+  .pc-stats-table{width:100%;border-collapse:collapse;margin-bottom:16px;font-size:.83rem;}
+  .pc-stats-table th,.pc-stats-table td{text-align:left;padding:6px 10px 6px 0;border-bottom:1px solid var(--pc-color-border);}
+  .pc-stats-table th{color:var(--pc-color-muted);font-weight:600;}
+
+  .pc-table-wrap{overflow-x:auto;}
+  .pc-log-table{width:100%;border-collapse:collapse;font-size:.8rem;white-space:nowrap;}
+  .pc-log-table th,.pc-log-table td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--pc-color-border);}
+  .pc-log-table th{color:var(--pc-color-muted);font-weight:600;}
+  .pc-log-table tr.pc-best-row{background:var(--pc-color-good-bg);}
+  .pc-log-table tr.pc-best-row .pc-unit-col{color:var(--pc-color-good);}
+  .pc-unit-col{font-weight:700;}
+  .pc-del-btn{background:none;border:none;color:var(--pc-color-muted);font-size:1rem;cursor:pointer;padding:2px 8px;}
+  .pc-del-btn:hover{color:var(--pc-color-bad);}
+  .pc-del-btn:focus-visible{outline:2px solid var(--pc-color-accent);}
+
+  .pc-storage-note{font-size:.72rem;color:var(--pc-color-muted);text-align:center;margin:22px 0 0;}
+
+  .pc-toast{
+    position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));
+    transform:translateX(-50%) translateY(20px);background:var(--pc-color-text);color:var(--pc-color-bg);
+    padding:10px 16px;border-radius:6px;font-size:.83rem;display:flex;gap:14px;align-items:center;
+    opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;z-index:60;
+    font-family:var(--pc-font-mono);
+  }
+  .pc-toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto;}
+  .pc-toast button{background:none;border:none;color:var(--pc-color-accent);font-weight:700;cursor:pointer;padding:0;text-decoration:underline;font-family:var(--pc-font-mono);}
+</style>
+</head>
+<body>
+  <div class="board">
+    <header class="board-header">
+      <div>
+        <h1>The Cheapskate Cheat Sheet</h1>
+        <p class="subtitle">Veni, Vidi, Discounti</p>
+      </div>
+      <button type="button" class="btn-primary" id="addBtn">+ Pin a deal</button>
+    </header>
+
+    <div class="stats-row" id="statsRow"></div>
+
+    <div class="toolbar-row">
+      <div class="view-switch" id="viewSwitch">
+        <button type="button" class="tab active" data-view="board">Overview</button>
+        <button type="button" class="tab" data-view="calendar">Calendar</button>
+        <button type="button" class="tab" data-view="pricecheck">Price Checker</button>
+      </div>
+      <div class="toolbar-actions">
+        <button type="button" class="btn-ghost on-board" id="shareBtn">Share</button>
+        <button type="button" class="btn-ghost on-board" id="exportBtn">Export JSON</button>
+        <button type="button" class="btn-ghost on-board" id="importBtn">Import JSON</button>
+        <input type="file" id="importInput" accept="application/json,.json" hidden />
+        <button type="button" class="link-btn danger" id="deleteAllBtn">Delete all</button>
+      </div>
+    </div>
+
+    <div class="overview-controls" id="overviewControls" aria-label="Overview filters">
+      <div class="overview-field">
+        <label for="shopFilter">Shop</label>
+        <select class="sort-select" id="shopFilter"><option value="all">All shops</option></select>
+      </div>
+      <div class="overview-field">
+        <label for="rankFilter">Rank</label>
+        <select class="sort-select" id="rankFilter">
+          <option value="all">All ranks</option>
+          <option value="5">Best deal</option><option value="4">Great deal</option>
+          <option value="3">Good deal</option><option value="2">Fair deal</option><option value="1">Ok deal</option>
+        </select>
+      </div>
+      <div class="overview-field">
+        <label for="categoryFilter">Category</label>
+        <select class="sort-select" id="categoryFilter"><option value="all">All categories</option></select>
+      </div>
+      <div class="overview-field">
+        <label for="endDateFilter">End date</label>
+        <select class="sort-select" id="endDateFilter">
+          <option value="all">Any end date</option><option value="active">Active</option>
+          <option value="expiring">Expiring soon</option><option value="upcoming">Upcoming</option>
+        </select>
+      </div>
+      <div class="overview-field sort-field">
+        <label for="overviewSort">Sort by</label>
+        <select class="sort-select" id="overviewSort">
+          <option value="end-asc">End date (soonest)</option>
+          <option value="shop-asc">Shop (A–Z)</option>
+          <option value="rank-desc">Rank (best first)</option>
+          <option value="rank-asc">Rank (lowest first)</option>
+          <option value="category-asc">Category (A–Z)</option>
+          <option value="added-desc">Recently added</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid" id="grid" hidden></div>
+
+    <div class="empty-state" id="emptyState" hidden>
+      <h2>Nothing pinned yet</h2>
+      <p>Add the first deal you spotted at a shop nearby.</p>
+      <button type="button" class="btn-primary" id="emptyAddBtn">+ Pin a deal</button>
+    </div>
+
+    <div class="filtered-empty" id="filteredEmpty" hidden>
+      <h2>No deals here</h2>
+      <p>Nothing matches this filter right now.</p>
+    </div>
+
+    <div class="calendar-controls" id="calendarControls" hidden>
+      <button type="button" class="btn-ghost on-board" id="prevMonthBtn">‹ Prev</button>
+      <h2 id="calendarMonthLabel">Month</h2>
+      <button type="button" class="btn-ghost on-board" id="nextMonthBtn">Next ›</button>
+      <button type="button" class="btn-ghost on-board" id="todayBtn">Today</button>
+    </div>
+
+    <div class="calendar-wrap" id="calendarWrap" hidden>
+      <div class="calendar-panel">
+        <div id="calendarGrid"></div>
+      </div>
+      <p class="calendar-empty" id="calendarEmpty" hidden>No promotions this month.</p>
+    </div>
+
+    <div id="pricecheckWrap" class="pc-page" hidden>
+      <header class="pc-masthead">
+        <h1>Good deal or not?</h1>
+        <p class="pc-tagline">See the price before you buy. Check it here for diapers, dishwasher tablets, toilet paper, kitchen towels, wet wipes, detergent or coffee cups — and find out whether it's actually a good deal compared to what you've seen before.</p>
+      </header>
+
+      <div class="pc-tab-rail">
+        <nav class="pc-tabs" id="pcTabs" role="tablist"></nav>
+      </div>
+
+      <main class="pc-card" id="pcPanel"></main>
+
+      <p class="pc-storage-note" id="pcStorageNote">Loading your price checks…</p>
+    </div>
+  </div>
+
+  <div class="pc-toast" id="pcToast" role="status"></div>
+
+  <!-- Edit / create modal -->
+  <div class="modal-overlay" id="modalOverlay" hidden>
+    <form class="modal" id="dealForm" novalidate>
+      <h2 id="modalTitle">Pin a new deal</h2>
+      <div class="form-error" id="formError" hidden></div>
+
+      <div class="field">
+        <label for="shopInput">Shop</label>
+        <input type="text" id="shopInput" placeholder="e.g. Delhaize, Colruyt" required />
+      </div>
+      <div class="field">
+        <label for="itemInput">What's on sale</label>
+        <input type="text" id="itemInput" placeholder="e.g. Ben &amp; Jerry's pints" required />
+      </div>
+      <div class="field">
+        <label for="discountInput">Discount</label>
+        <input type="text" id="discountInput" placeholder="e.g. 2 for €7, 30% off" required />
+      </div>
+      <div class="field">
+        <label>Rank</label>
+        <div class="rank-picker" id="rankPicker">
+          <label class="rank-option" style="--rank-color: hsl(132, 42%, 74%);"><input type="radio" name="rank" value="5" /><span>Best deal</span></label>
+          <label class="rank-option" style="--rank-color: hsl(111, 42%, 74%);"><input type="radio" name="rank" value="4" /><span>Great deal</span></label>
+          <label class="rank-option" style="--rank-color: hsl(90, 42%, 74%);"><input type="radio" name="rank" value="3" /><span>Good deal</span></label>
+          <label class="rank-option" style="--rank-color: hsl(69, 42%, 74%);"><input type="radio" name="rank" value="2" /><span>Fair deal</span></label>
+          <label class="rank-option" style="--rank-color: hsl(48, 42%, 74%);"><input type="radio" name="rank" value="1" /><span>Ok deal</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label for="categorySelect">Category (optional)</label>
+        <select id="categorySelect">
+          <option value="">No category</option>
+          <option value="Groceries">Groceries</option>
+          <option value="Household">Household</option>
+          <option value="Personal care">Personal care</option>
+          <option value="Drinks & snacks">Drinks &amp; snacks</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="startInput">Starts (optional)</label>
+          <input type="date" id="startInput" />
+        </div>
+        <div class="field">
+          <label for="endInput">Ends</label>
+          <input type="date" id="endInput" required />
+        </div>
+      </div>
+      <div class="field">
+        <label for="notesInput">Notes (optional)</label>
+        <textarea id="notesInput" placeholder="e.g. needs loyalty card"></textarea>
+      </div>
+
+      <div class="field" id="imageField">
+        <label>Screenshot of the flyer (optional)</label>
+        <div class="paste-zone" id="pasteZone">
+          <img id="pastePreview" hidden alt="Selected screenshot preview" />
+          <span class="paste-zone-hint" id="pasteHint">Paste a screenshot here, or choose one from your device</span>
+          <div class="image-picker-actions">
+            <input class="sr-only" type="file" id="imageInput" accept="image/jpeg,image/png,image/webp,image/gif" />
+            <button type="button" class="btn-ghost" id="selectImageBtn">Choose image</button>
+            <button type="button" class="link-btn" id="removeImageBtn" hidden>Remove image</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-ghost" id="cancelBtn">Cancel</button>
+        <button type="submit" class="btn-primary" id="saveBtn">Save deal</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- View / details popup -->
+  <div class="modal-overlay" id="viewOverlay" hidden>
+    <div class="modal" id="viewModal">
+      <button type="button" class="close-x" id="viewCloseBtn" aria-label="Close">×</button>
+      <img class="view-image" id="viewImage" hidden alt="" />
+      <p class="card-shop" id="viewShop"></p>
+      <h2 class="view-title" id="viewTitle"></h2>
+      <div class="card-badges" id="viewBadges"></div>
+      <p class="card-notes" id="viewNotes" hidden></p>
+      <div class="view-actions">
+        <label class="used-toggle">
+          <input type="checkbox" id="viewUsedToggle" />
+          Used
+        </label>
+        <div class="right">
+          <button type="button" class="link-btn" id="viewEditBtn">Edit</button>
+          <button type="button" class="link-btn danger" id="viewDeleteBtn">Remove</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm dialog (replaces native confirm, which can be blocked here) -->
+  <div class="modal-overlay confirm-overlay" id="confirmOverlay" hidden>
+    <div class="modal confirm-modal">
+      <p class="confirm-message" id="confirmMessage"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn-ghost" id="confirmCancelBtn">Cancel</button>
+        <button type="button" class="btn-primary danger-btn" id="confirmOkBtn">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <script>
+    // ---------- state ----------
+    let promotions = [];
+    let editingId = null;
+    let viewingId = null;
+    let currentFilter = 'all';
+    let currentStore = 'all';
+    let currentCategory = 'all';
+    let currentSort = 'end-asc';
+    let currentRating = 'all';
+    let currentView = 'board';
+    let toastTimer = null;
+    let pendingImageFile = null;
+    let pendingImageRemoved = false;
+    let currentPreviewObjectUrl = null;
+
+    const now0 = new Date();
+    let calendarMonth = new Date(now0.getFullYear(), now0.getMonth(), 1);
+
+    const STATUS_META = {
+      active:   { label: 'Active',         cssVar: '--accent-active' },
+      expiring: { label: 'Expiring soon',  cssVar: '--accent-expiring' },
+      upcoming: { label: 'Upcoming',       cssVar: '--accent-upcoming' },
+      expired:  { label: 'Expired',        cssVar: '--accent-expired' },
+    };
+
+    const SHOP_PALETTE = ['#F0DCC8', '#D9E7E4', '#E6DCF0', '#EFE9D2', '#F3DCE1', '#DCEBE0', '#DEE3F2', '#F0E3D2'];
+
+    const RANK_META = [
+      { value: 5, label: 'Best deal',  hue: 132 },
+      { value: 4, label: 'Great deal', hue: 111 },
+      { value: 3, label: 'Good deal',  hue: 90 },
+      { value: 2, label: 'Fair deal',  hue: 69 },
+      { value: 1, label: 'Ok deal',    hue: 48 },
+    ];
+    function rankColor(hue) { return 'hsl(' + hue + ', 42%, 74%)'; }
+    function rankMeta(value) {
+      const n = Number(value);
+      return RANK_META.find(r => r.value === n) || null;
+    }
+
+    // ---------- elements ----------
+    const grid = document.getElementById('grid');
+    const emptyState = document.getElementById('emptyState');
+    const filteredEmpty = document.getElementById('filteredEmpty');
+    const statsRow = document.getElementById('statsRow');
+    const addBtn = document.getElementById('addBtn');
+    const emptyAddBtn = document.getElementById('emptyAddBtn');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const dealForm = document.getElementById('dealForm');
+    const modalTitle = document.getElementById('modalTitle');
+    const formError = document.getElementById('formError');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const toastEl = document.getElementById('toast');
+
+    const shopInput = document.getElementById('shopInput');
+    const itemInput = document.getElementById('itemInput');
+    const discountInput = document.getElementById('discountInput');
+    const categorySelect = document.getElementById('categorySelect');
+    const startInput = document.getElementById('startInput');
+    const endInput = document.getElementById('endInput');
+    const notesInput = document.getElementById('notesInput');
+
+    const imageField = document.getElementById('imageField');
+    const pastePreview = document.getElementById('pastePreview');
+    const pasteHint = document.getElementById('pasteHint');
+    const imageInput = document.getElementById('imageInput');
+    const selectImageBtn = document.getElementById('selectImageBtn');
+    const removeImageBtn = document.getElementById('removeImageBtn');
+
+    const viewSwitch = document.getElementById('viewSwitch');
+    const calendarControls = document.getElementById('calendarControls');
+    const calendarWrap = document.getElementById('calendarWrap');
+    const pricecheckWrap = document.getElementById('pricecheckWrap');
+    const toolbarActions = document.querySelector('.toolbar-actions');
+    const overviewControls = document.getElementById('overviewControls');
+    const shopFilter = document.getElementById('shopFilter');
+    const rankFilter = document.getElementById('rankFilter');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const endDateFilter = document.getElementById('endDateFilter');
+    const overviewSort = document.getElementById('overviewSort');
+    const calendarGrid = document.getElementById('calendarGrid');
+    const calendarEmpty = document.getElementById('calendarEmpty');
+    const calendarMonthLabel = document.getElementById('calendarMonthLabel');
+    const prevMonthBtn = document.getElementById('prevMonthBtn');
+    const nextMonthBtn = document.getElementById('nextMonthBtn');
+    const todayBtn = document.getElementById('todayBtn');
+
+    const viewOverlay = document.getElementById('viewOverlay');
+    const viewCloseBtn = document.getElementById('viewCloseBtn');
+    const viewImage = document.getElementById('viewImage');
+    const viewShop = document.getElementById('viewShop');
+    const viewTitle = document.getElementById('viewTitle');
+    const viewBadges = document.getElementById('viewBadges');
+    const viewNotes = document.getElementById('viewNotes');
+    const viewUsedToggle = document.getElementById('viewUsedToggle');
+    const viewEditBtn = document.getElementById('viewEditBtn');
+    const viewDeleteBtn = document.getElementById('viewDeleteBtn');
+
+    const shareBtn = document.getElementById('shareBtn');
+    const exportBtn = document.getElementById('exportBtn');
+    const importBtn = document.getElementById('importBtn');
+    const importInput = document.getElementById('importInput');
+    const deleteAllBtn = document.getElementById('deleteAllBtn');
+    const confirmOverlay = document.getElementById('confirmOverlay');
+    const confirmMessage = document.getElementById('confirmMessage');
+    const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+    const confirmOkBtn = document.getElementById('confirmOkBtn');
+
+    // ---------- date helpers ----------
+    function toDate(value) {
+      if (value instanceof Date) return new Date(value);
+      const match = String(value || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (!match) return new Date(NaN);
+      const y = Number(match[1]);
+      const m = Number(match[2]);
+      const d = Number(match[3]);
+      return new Date(y, m - 1, d);
+    }
+    function startOfDay(value) {
+      const d = toDate(value);
+      d.setHours(0, 0, 0, 0);
+      return d;
+    }
+    function formatISODate(d) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return y + '-' + m + '-' + day;
+    }
+    function formatDisplayDate(value) {
+      const d = value instanceof Date ? value : new Date(value);
+      if (Number.isNaN(d.getTime())) return '—';
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      return day + '/' + month + '/' + d.getFullYear();
+    }
+    function pluralDays(n) {
+      return n + ' day' + (n === 1 ? '' : 's');
+    }
+    function daysDiff(a, b) {
+      return Math.round((a - b) / 86400000);
+    }
+
+    function getStatus(promo) {
+      const today = startOfDay(new Date());
+      if (promo.startDate && today < startOfDay(promo.startDate)) return 'upcoming';
+      if (today > startOfDay(promo.endDate)) return 'expired';
+      const daysLeft = daysDiff(startOfDay(promo.endDate), today);
+      if (daysLeft <= 3) return 'expiring';
+      return 'active';
+    }
+
+    function statusText(promo, status) {
+      const today = startOfDay(new Date());
+      if (status === 'upcoming') {
+        const d = daysDiff(startOfDay(promo.startDate), today);
+        return d <= 0 ? 'Starts today' : 'Starts in ' + pluralDays(d);
+      }
+      if (status === 'expired') {
+        const d = daysDiff(today, startOfDay(promo.endDate));
+        return d <= 0 ? 'Ended today' : 'Ended ' + pluralDays(d) + ' ago';
+      }
+      const d = daysDiff(startOfDay(promo.endDate), today);
+      if (d <= 0) return 'Ends today';
+      return pluralDays(d) + ' left';
+    }
+
+    // ---------- persistence ----------
+    let expirationRefreshTimer;
+
+    function scheduleExpirationRefresh() {
+      clearTimeout(expirationRefreshTimer);
+      const nextMidnight = new Date();
+      nextMidnight.setHours(24, 0, 0, 100);
+      expirationRefreshTimer = setTimeout(async () => {
+        try {
+          await loadPromotions();
+        } catch (err) {
+          scheduleExpirationRefresh();
+        }
+      }, nextMidnight.getTime() - Date.now());
+    }
+
+    async function api(path, options) {
+      const response = await fetch(path, options);
+      if (!response.ok) {
+        let message = 'Request failed: ' + response.status;
+        try {
+          const body = await response.json();
+          if (body && body.error) message = body.error;
+        } catch (err) { /* keep the status fallback */ }
+        throw new Error(message);
+      }
+      return response.status === 204 ? null : response.json();
+    }
+    async function loadPromotions() {
+      promotions = await api('/api/promotions?today=' + encodeURIComponent(formatISODate(new Date())));
+      renderAll();
+      scheduleExpirationRefresh();
+    }
+    async function createPromo(data) {
+      await api('/api/promotions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+      await loadPromotions();
+    }
+    async function editPromo(id, data) {
+      await api('/api/promotions/' + encodeURIComponent(id), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+      await loadPromotions();
+    }
+    async function removePromo(id) {
+      await api('/api/promotions/' + encodeURIComponent(id), { method: 'DELETE' });
+      await loadPromotions();
+    }
+
+    // ---------- rendering: board ----------
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, ch => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[ch]));
+    }
+
+    function badgesHtml(promo, status) {
+      const meta = STATUS_META[status];
+      const rMeta = rankMeta(promo.rank);
+      return `
+        <span class="card-status" style="--status-color: var(${meta.cssVar});">${meta.label} · ${statusText(promo, status)}</span>
+        ${rMeta ? `<span class="rank-badge" style="--rank-color: ${rankColor(rMeta.hue)};">${escapeHtml(rMeta.label)}</span>` : ''}
+        <span class="discount-badge">${escapeHtml(promo.discount)}</span>
+        ${promo.category ? `<span class="card-category">${escapeHtml(promo.category)}</span>` : ''}
+      `;
+    }
+
+    function imgSrcOf(promo) {
+      return promo.imageKey ? '/api/screenshots/' + encodeURIComponent(promo.imageKey) : null;
+    }
+
+    function cardHTML(promo) {
+      const status = getStatus(promo);
+      const used = !!promo.redeemed;
+      const src = imgSrcOf(promo);
+      const rMeta = rankMeta(promo.rank);
+      const rankColorValue = rMeta ? rankColor(rMeta.hue) : 'var(--paper-border)';
+      const imageHtml = src
+        ? `<img class="card-image" src="${src}" alt="Screenshot of the ${escapeHtml(promo.shop)} flyer" />`
+        : '';
+      return `
+        <article class="deal-card ${used ? 'used' : ''}" data-action="view" data-id="${promo.id}" tabindex="0" style="--rank-color: ${rankColorValue};">
+          ${imageHtml}
+          <p class="card-shop">${escapeHtml(promo.shop)}</p>
+          <h3 class="card-title">${escapeHtml(promo.item)}</h3>
+          <div class="card-badges">${badgesHtml(promo, status)}</div>
+          ${promo.notes ? `<p class="card-notes">${escapeHtml(promo.notes)}</p>` : ''}
+          <div class="card-actions">
+            <label class="used-toggle">
+              <input type="checkbox" data-action="toggle" data-id="${promo.id}" ${used ? 'checked' : ''} />
+              Used
+            </label>
+          </div>
+        </article>
+      `;
+    }
+
+    function sortPromos(list) {
+      const arr = [...list];
+      if (currentSort === 'end-asc') {
+        arr.sort((a, b) => {
+          const aExp = getStatus(a) === 'expired';
+          const bExp = getStatus(b) === 'expired';
+          if (aExp !== bExp) return aExp ? 1 : -1;
+          return startOfDay(a.endDate) - startOfDay(b.endDate);
+        });
+      } else if (currentSort === 'added-desc') {
+        arr.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+      } else if (currentSort === 'shop-asc') {
+        arr.sort((a, b) =>
+          a.shop.localeCompare(b.shop, undefined, { sensitivity: 'base' })
+          || a.item.localeCompare(b.item, undefined, { sensitivity: 'base' })
+        );
+      } else if (currentSort === 'category-asc') {
+        arr.sort((a, b) => {
+          const aCategory = (a.category || '').trim();
+          const bCategory = (b.category || '').trim();
+          if (!aCategory && bCategory) return 1;
+          if (aCategory && !bCategory) return -1;
+          return aCategory.localeCompare(bCategory, undefined, { sensitivity: 'base' })
+            || a.shop.localeCompare(b.shop, undefined, { sensitivity: 'base' })
+            || a.item.localeCompare(b.item, undefined, { sensitivity: 'base' });
+        });
+      } else if (currentSort === 'rank-desc') {
+        arr.sort((a, b) => Number(b.rank || 0) - Number(a.rank || 0));
+      } else if (currentSort === 'rank-asc') {
+        arr.sort((a, b) => Number(a.rank || 0) - Number(b.rank || 0));
+      }
+      return arr;
+    }
+
+    function renderStats() {
+      const counts = { active: 0, expiring: 0, upcoming: 0, expired: 0 };
+      promotions.forEach(p => { counts[getStatus(p)]++; });
+      statsRow.innerHTML = `
+        <span class="stat-chip"><span class="stat-dot" style="background:var(--accent-active)"></span>${counts.active} active</span>
+        <span class="stat-chip"><span class="stat-dot" style="background:var(--accent-expiring)"></span>${counts.expiring} expiring soon</span>
+        <span class="stat-chip"><span class="stat-dot" style="background:var(--accent-upcoming)"></span>${counts.upcoming} upcoming</span>
+      `;
+    }
+
+    function renderBoard() {
+      const statusFiltered = currentFilter === 'all'
+        ? promotions
+        : promotions.filter(p => getStatus(p) === currentFilter);
+      const storeFiltered = currentStore === 'all'
+        ? statusFiltered
+        : statusFiltered.filter(p => p.shop === currentStore);
+      const filtered = currentCategory === 'all'
+        ? storeFiltered
+        : storeFiltered.filter(p => (p.category || '') === currentCategory);
+      const ratingFiltered = currentRating === 'all'
+        ? filtered
+        : filtered.filter(p => Number(p.rank) === Number(currentRating));
+      const sorted = sortPromos(ratingFiltered);
+
+      const hasAny = promotions.length > 0;
+      emptyState.hidden = hasAny;
+      grid.hidden = !hasAny;
+      filteredEmpty.hidden = !(hasAny && sorted.length === 0);
+
+      grid.innerHTML = sorted.map(cardHTML).join('');
+    }
+
+    function refreshOverviewOptions() {
+      const replaceOptions = (select, values, allLabel) => {
+        const selected = select.value;
+        select.innerHTML = `<option value="all">${allLabel}</option>` + values.map(value =>
+          `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`
+        ).join('');
+        select.value = values.includes(selected) ? selected : 'all';
+      };
+      const shops = [...new Set(promotions.map(p => p.shop).filter(Boolean))]
+        .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+      const categories = [...new Set(promotions.map(p => (p.category || '').trim()).filter(Boolean))]
+        .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+      replaceOptions(shopFilter, shops, 'All shops');
+      replaceOptions(categoryFilter, categories, 'All categories');
+      currentStore = shopFilter.value;
+      currentCategory = categoryFilter.value;
+    }
+
+    // ---------- rendering: calendar ----------
+    function daysInMonth(year, monthIdx) {
+      return new Date(year, monthIdx + 1, 0).getDate();
+    }
+
+    function centerCalendarOnToday() {
+      const todayHeader = calendarGrid.querySelector('.cal-day-header.today');
+      const calendarPanel = calendarGrid.closest('.calendar-panel');
+      if (!todayHeader || !calendarPanel) return;
+
+      calendarPanel.scrollLeft = todayHeader.offsetLeft
+        + (todayHeader.offsetWidth / 2)
+        - (calendarPanel.clientWidth / 2);
+    }
+
+    function renderCalendar() {
+      const year = calendarMonth.getFullYear();
+      const monthIdx = calendarMonth.getMonth();
+      const numDays = daysInMonth(year, monthIdx);
+      const monthStart = new Date(year, monthIdx, 1);
+      const monthEnd = new Date(year, monthIdx, numDays);
+
+      calendarMonthLabel.textContent = calendarMonth.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+
+      const overlapping = promotions.filter(p => {
+        const effStart = p.startDate ? startOfDay(p.startDate) : new Date(-8640000000000000);
+        const effEnd = startOfDay(p.endDate);
+        return effStart <= monthEnd && effEnd >= monthStart;
+      });
+
+      if (overlapping.length === 0) {
+        calendarGrid.innerHTML = '';
+        calendarEmpty.hidden = false;
+        return;
+      }
+      calendarEmpty.hidden = true;
+
+      const byShop = {};
+      overlapping.forEach(p => {
+        if (!byShop[p.shop]) byShop[p.shop] = [];
+        byShop[p.shop].push(p);
+      });
+      const shopNames = Object.keys(byShop).sort((a, b) => a.localeCompare(b));
+
+      const rows = [];
+      shopNames.forEach(shop => {
+        const list = byShop[shop].sort((a, b) => {
+          const as = a.startDate ? startOfDay(a.startDate) : monthStart;
+          const bs = b.startDate ? startOfDay(b.startDate) : monthStart;
+          return as - bs;
+        });
+        list.forEach((promo, idx) => {
+          rows.push({ shop, promo, isFirstOfShop: idx === 0, shopSpan: list.length });
+        });
+      });
+
+      const todayStr = formatISODate(new Date());
+      let html = `<div style="display:grid; grid-template-columns: 150px repeat(${numDays}, minmax(30px,1fr)); grid-template-rows: 38px repeat(${rows.length}, 36px); gap:3px;">`;
+
+      html += `<div style="grid-row:1; grid-column:1;"></div>`;
+      for (let d = 1; d <= numDays; d++) {
+        const dateObj = new Date(year, monthIdx, d);
+        const isToday = formatISODate(dateObj) === todayStr;
+        const weekday = dateObj.toLocaleDateString(undefined, { weekday: 'short' });
+        html += `<div class="cal-day-header ${isToday ? 'today' : ''}" style="grid-row:1; grid-column:${d + 1};"><span class="cal-weekday">${escapeHtml(weekday)}</span><span class="cal-date-number">${d}</span></div>`;
+      }
+
+      const shopColorMap = {};
+      shopNames.forEach((shop, idx) => { shopColorMap[shop] = SHOP_PALETTE[idx % SHOP_PALETTE.length]; });
+
+      let bandCursor = 2;
+      shopNames.forEach(shop => {
+        const span = byShop[shop].length;
+        html += `<div style="grid-row:${bandCursor} / span ${span}; grid-column: 1 / -1; background:${shopColorMap[shop]}; border-radius:8px;"></div>`;
+        bandCursor += span;
+      });
+
+      for (let d = 1; d <= numDays; d++) {
+        const dayOfWeek = new Date(year, monthIdx, d).getDay();
+        if (dayOfWeek === 0 || dayOfWeek === 6) {
+          html += `<div class="cal-weekend-band" style="grid-row:1 / -1; grid-column:${d + 1};"></div>`;
+        }
+      }
+
+      rows.forEach((row, i) => {
+        const gridRow = i + 2;
+        if (row.isFirstOfShop) {
+          html += `<div class="cal-cell-label" style="grid-row: ${gridRow} / span ${row.shopSpan}; grid-column: 1; background:${shopColorMap[row.shop]};">${escapeHtml(row.shop)}</div>`;
+        }
+        const promo = row.promo;
+        const s = promo.startDate ? startOfDay(promo.startDate) : monthStart;
+        const e = startOfDay(promo.endDate);
+        const clampedStart = s < monthStart ? monthStart : s;
+        const clampedEnd = e > monthEnd ? monthEnd : e;
+        const startCol = clampedStart.getDate() + 1;
+        const endCol = clampedEnd.getDate() + 2;
+        const rMeta = rankMeta(promo.rank);
+        const rankColorValue = rMeta ? rankColor(rMeta.hue) : 'var(--paper-border)';
+        const used = !!promo.redeemed;
+        const imgHtml = imgSrcOf(promo) ? `<img class="cal-bar-img" src="${imgSrcOf(promo)}" alt="" />` : '';
+        html += `<button type="button" class="cal-bar ${used ? 'used' : ''}" style="grid-row:${gridRow}; grid-column:${startCol} / ${endCol}; --rank-color:${rankColorValue};" data-action="view" data-id="${promo.id}" title="${escapeHtml(promo.shop)} — ${escapeHtml(promo.item)} (${escapeHtml(promo.discount)})${rMeta ? ' — ' + escapeHtml(rMeta.label) : ''}">${imgHtml}<span class="cal-bar-text">${escapeHtml(promo.item)}</span></button>`;
+      });
+
+      html += `</div>`;
+      calendarGrid.innerHTML = html;
+    }
+
+    function renderAll() {
+      renderStats();
+      refreshOverviewOptions();
+      const isBoard = currentView === 'board';
+      const isCalendar = currentView === 'calendar';
+      const isPriceCheck = currentView === 'pricecheck';
+
+      calendarControls.hidden = !isCalendar;
+      calendarWrap.hidden = !isCalendar;
+      if (pricecheckWrap) pricecheckWrap.hidden = !isPriceCheck;
+      statsRow.hidden = isPriceCheck;
+      if (toolbarActions) toolbarActions.hidden = isPriceCheck;
+      overviewControls.hidden = !isBoard;
+      addBtn.hidden = isPriceCheck;
+
+      if (isBoard) {
+        renderBoard();
+      } else if (isCalendar) {
+        grid.hidden = true;
+        emptyState.hidden = true;
+        filteredEmpty.hidden = true;
+        renderCalendar();
+      } else {
+        grid.hidden = true;
+        emptyState.hidden = true;
+        filteredEmpty.hidden = true;
+      }
+    }
+
+    // ---------- toast ----------
+    function showToast(msg) {
+      toastEl.textContent = msg;
+      toastEl.hidden = false;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => { toastEl.hidden = true; }, 3500);
+    }
+
+    // ---------- image paste ----------
+    function findImageItem(clipboardData) {
+      if (!clipboardData || !clipboardData.items) return null;
+      for (const item of clipboardData.items) {
+        if (item.type && item.type.indexOf('image/') === 0) return item;
+      }
+      return null;
+    }
+    function setPreviewFromFile(file) {
+      if (currentPreviewObjectUrl) URL.revokeObjectURL(currentPreviewObjectUrl);
+      currentPreviewObjectUrl = URL.createObjectURL(file);
+      pastePreview.src = currentPreviewObjectUrl;
+      pastePreview.hidden = false;
+      pasteHint.hidden = true;
+      removeImageBtn.hidden = false;
+    }
+    function clearPreview() {
+      if (currentPreviewObjectUrl) { URL.revokeObjectURL(currentPreviewObjectUrl); currentPreviewObjectUrl = null; }
+      pastePreview.hidden = true;
+      pastePreview.removeAttribute('src');
+      pasteHint.hidden = false;
+      removeImageBtn.hidden = true;
+    }
+    function handlePaste(e) {
+      const item = findImageItem(e.clipboardData);
+      if (!item) return;
+      const file = item.getAsFile();
+      if (!file) return;
+      e.preventDefault();
+      pendingImageFile = file;
+      pendingImageRemoved = false;
+      setPreviewFromFile(file);
+    }
+    function handleImageSelection() {
+      const file = imageInput.files && imageInput.files[0];
+      if (!file) return;
+      const supportedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+      if (!supportedTypes.includes(file.type)) {
+        imageInput.value = '';
+        formError.textContent = 'Choose a JPG, PNG, WebP, or GIF image.';
+        formError.hidden = false;
+        return;
+      }
+      pendingImageFile = file;
+      pendingImageRemoved = false;
+      formError.hidden = true;
+      setPreviewFromFile(file);
+    }
+    // ---------- edit/create modal ----------
+    function openModal(promo) {
+      editingId = promo ? promo.id : null;
+      modalTitle.textContent = promo ? 'Edit deal' : 'Pin a new deal';
+      saveBtn.textContent = promo ? 'Save changes' : 'Save deal';
+      formError.hidden = true;
+      formError.textContent = '';
+      shopInput.value = promo ? promo.shop : '';
+      itemInput.value = promo ? promo.item : '';
+      discountInput.value = promo ? promo.discount : '';
+      categorySelect.value = (promo && promo.category) ? promo.category : '';
+      dealForm.querySelectorAll('input[name="rank"]').forEach(inp => {
+        inp.checked = !!(promo && promo.rank != null && Number(promo.rank) === Number(inp.value));
+      });
+      startInput.value = (promo && promo.startDate) ? promo.startDate : '';
+      endInput.value = promo ? promo.endDate : '';
+      notesInput.value = (promo && promo.notes) ? promo.notes : '';
+
+      pendingImageFile = null;
+      pendingImageRemoved = false;
+      imageInput.value = '';
+      if (currentPreviewObjectUrl) { URL.revokeObjectURL(currentPreviewObjectUrl); currentPreviewObjectUrl = null; }
+      const existingSrc = promo ? imgSrcOf(promo) : null;
+      if (existingSrc) {
+        pastePreview.src = existingSrc;
+        pastePreview.hidden = false;
+        pasteHint.hidden = true;
+        removeImageBtn.hidden = false;
+      } else {
+        pastePreview.hidden = true;
+        pastePreview.removeAttribute('src');
+        pasteHint.hidden = false;
+        removeImageBtn.hidden = true;
+      }
+
+      modalOverlay.hidden = false;
+      shopInput.focus();
+    }
+    function closeModal() {
+      modalOverlay.hidden = true;
+      editingId = null;
+    }
+
+    async function handleSubmit(e) {
+      e.preventDefault();
+      const shop = shopInput.value.trim();
+      const item = itemInput.value.trim();
+      const discount = discountInput.value.trim();
+      const rankInput = dealForm.querySelector('input[name="rank"]:checked');
+      const rank = rankInput ? Number(rankInput.value) : null;
+      const category = categorySelect.value;
+      const startDate = startInput.value || null;
+      const endDate = endInput.value;
+      const notes = notesInput.value.trim();
+
+      if (!shop || !item || !discount || !endDate || !rank) {
+        formError.textContent = 'Fill in the shop, deal, discount, end date, and rank.';
+        formError.hidden = false;
+        return;
+      }
+      if (startDate && startDate > endDate) {
+        formError.textContent = 'The start date is after the end date.';
+        formError.hidden = false;
+        return;
+      }
+
+      const wasEditing = !!editingId;
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving…';
+
+      let imageKeyChange; // undefined = no change
+      if (pendingImageFile) {
+        try {
+          const uploaded = await api('/api/screenshots', { method: 'POST', headers: { 'Content-Type': pendingImageFile.type }, body: pendingImageFile });
+          imageKeyChange = uploaded.key;
+        } catch (err) {
+          formError.textContent = 'The screenshot could not be uploaded. Try again.';
+          formError.hidden = false;
+          saveBtn.disabled = false;
+          saveBtn.textContent = wasEditing ? 'Save changes' : 'Save deal';
+          return;
+        }
+      } else if (pendingImageRemoved) {
+        imageKeyChange = null;
+      }
+
+      const payload = { shop, item, discount, category: category || null, startDate, endDate, notes: notes || null, rank };
+      if (imageKeyChange !== undefined) payload.imageKey = imageKeyChange;
+
+      try {
+        if (wasEditing) {
+          await editPromo(editingId, payload);
+        } else {
+          await createPromo({ ...payload, redeemed: false, createdAt: Date.now() });
+        }
+        closeModal();
+      } catch (err) {
+        formError.textContent = err && err.message
+          ? 'Could not save this deal: ' + err.message
+          : 'Something went wrong saving this deal. Try again.';
+        formError.hidden = false;
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = wasEditing ? 'Save changes' : 'Save deal';
+      }
+    }
+
+    async function handleDelete(id) {
+      const promo = promotions.find(p => p.id === id);
+      const label = promo ? promo.item : 'this deal';
+      const ok = await askConfirm('Remove "' + label + '" from the board? This can\u2019t be undone.', 'Remove');
+      if (!ok) return false;
+      try { await removePromo(id); return true; }
+      catch (err) { showToast('Could not remove this deal — try again.'); return false; }
+    }
+
+    async function handleToggle(id, checked) {
+      try { await editPromo(id, { redeemed: checked }); }
+      catch (err) { showToast('Could not update this deal.'); }
+    }
+
+    async function handleDeleteAll() {
+      if (promotions.length === 0) { showToast('Nothing to delete.'); return; }
+      const ok = await askConfirm('Delete all ' + promotions.length + ' promotions? This can\u2019t be undone.', 'Delete all');
+      if (!ok) return;
+      try {
+        await api('/api/promotions', { method: 'DELETE' });
+        await loadPromotions();
+        showToast('All promotions deleted.');
+      } catch (err) {
+        showToast('Could not delete everything — try again.');
+      }
+    }
+
+    async function handleShare() {
+      const url = location.href;
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: 'Deal Board', url });
+          return;
+        } catch (err) {
+          if (err && err.name === 'AbortError') return;
+        }
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        try {
+          await navigator.clipboard.writeText(url);
+          showToast('Link copied to clipboard.');
+          return;
+        } catch (err) { /* fall through to last-resort display */ }
+      }
+      showToast(url);
+    }
+
+    function blobToDataUrl(blob) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error || new Error('Could not read screenshot.'));
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    async function handleExport() {
+      if (promotions.length === 0) { showToast('Nothing to export.'); return; }
+      exportBtn.disabled = true;
+      exportBtn.textContent = 'Exporting…';
+      try {
+        const entries = [];
+        for (const promo of promotions) {
+          let screenshot = null;
+          if (promo.imageKey) {
+            const response = await fetch('/api/screenshots/' + encodeURIComponent(promo.imageKey));
+            if (!response.ok) throw new Error('A promotion screenshot could not be included.');
+            const blob = await response.blob();
+            screenshot = { type: blob.type, dataUrl: await blobToDataUrl(blob) };
+          }
+          entries.push({
+            id: promo.id,
+            shop: promo.shop,
+            item: promo.item,
+            discount: promo.discount,
+            category: promo.category,
+            startDate: promo.startDate,
+            endDate: promo.endDate,
+            notes: promo.notes,
+            redeemed: !!promo.redeemed,
+            rank: promo.rank,
+            createdAt: promo.createdAt,
+            screenshot,
+          });
+        }
+        const backup = {
+          format: 'cheapskate-cheat-sheet-promotions',
+          version: 1,
+          exportedAt: new Date().toISOString(),
+          promotions: entries,
+        };
+        const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'cheapskate-promotions-' + new Date().toISOString().slice(0, 10) + '.json';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        showToast('Promotion backup downloaded.');
+      } catch (err) {
+        showToast(err && err.message ? err.message : 'Could not export promotions.');
+      } finally {
+        exportBtn.disabled = false;
+        exportBtn.textContent = 'Export JSON';
+      }
+    }
+
+    function validBackupPromotion(promo) {
+      return promo && typeof promo === 'object' &&
+        typeof promo.shop === 'string' && promo.shop.trim() &&
+        typeof promo.item === 'string' && promo.item.trim() &&
+        typeof promo.discount === 'string' && promo.discount.trim() &&
+        typeof promo.endDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(promo.endDate) &&
+        Number.isInteger(Number(promo.rank)) && Number(promo.rank) >= 1 && Number(promo.rank) <= 5;
+    }
+
+    async function handleImportFile() {
+      const file = importInput.files && importInput.files[0];
+      importInput.value = '';
+      if (!file) return;
+      try {
+        const backup = JSON.parse(await file.text());
+        if (!backup || backup.format !== 'cheapskate-cheat-sheet-promotions' || backup.version !== 1 ||
+            !Array.isArray(backup.promotions) || backup.promotions.length > 1000 ||
+            !backup.promotions.every(validBackupPromotion)) {
+          throw new Error('This is not a valid promotion backup file.');
+        }
+        if (backup.promotions.length === 0) { showToast('This backup contains no promotions.'); return; }
+        const ok = await askConfirm(
+          'Import ' + backup.promotions.length + ' promotions? They will be added alongside your current promotions.',
+          'Import'
+        );
+        if (!ok) return;
+
+        importBtn.disabled = true;
+        importBtn.textContent = 'Importing…';
+        let imported = 0;
+        for (const promo of backup.promotions) {
+          let imageKey = null;
+          if (promo.screenshot && typeof promo.screenshot.dataUrl === 'string') {
+            if (!/^data:image\/(?:jpeg|png|webp|gif);base64,/i.test(promo.screenshot.dataUrl)) {
+              throw new Error('A screenshot in the backup is invalid.');
+            }
+            const imageBlob = await fetch(promo.screenshot.dataUrl).then(response => response.blob());
+            const uploaded = await api('/api/screenshots', {
+              method: 'POST', headers: { 'Content-Type': imageBlob.type }, body: imageBlob,
+            });
+            imageKey = uploaded.key;
+          }
+          await api('/api/promotions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              shop: promo.shop,
+              item: promo.item,
+              discount: promo.discount,
+              category: promo.category || null,
+              startDate: promo.startDate || null,
+              endDate: promo.endDate,
+              notes: promo.notes || null,
+              redeemed: !!promo.redeemed,
+              rank: Number(promo.rank),
+              createdAt: promo.createdAt,
+              imageKey,
+            }),
+          });
+          imported++;
+        }
+        await loadPromotions();
+        showToast('Imported ' + imported + ' promotion' + (imported === 1 ? '' : 's') + '.');
+      } catch (err) {
+        await loadPromotions().catch(() => {});
+        showToast(err && err.message ? err.message : 'Could not import this backup.');
+      } finally {
+        importBtn.disabled = false;
+        importBtn.textContent = 'Import JSON';
+      }
+    }
+
+    // ---------- confirm dialog ----------
+    let confirmResolver = null;
+    function askConfirm(message, okLabel) {
+      confirmMessage.textContent = message;
+      confirmOkBtn.textContent = okLabel || 'Confirm';
+      confirmOverlay.hidden = false;
+      return new Promise((resolve) => { confirmResolver = resolve; });
+    }
+    function closeConfirm(result) {
+      confirmOverlay.hidden = true;
+      if (confirmResolver) {
+        const resolve = confirmResolver;
+        confirmResolver = null;
+        resolve(result);
+      }
+    }
+
+    // ---------- view popup ----------
+    function openViewModal(id) {
+      const promo = promotions.find(p => p.id === id);
+      if (!promo) return;
+      viewingId = id;
+      const status = getStatus(promo);
+
+      const src = imgSrcOf(promo);
+      if (src) {
+        viewImage.src = src;
+        viewImage.hidden = false;
+      } else {
+        viewImage.hidden = true;
+        viewImage.removeAttribute('src');
+      }
+      viewShop.textContent = promo.shop;
+      viewTitle.textContent = promo.item;
+      viewBadges.innerHTML = badgesHtml(promo, status);
+      if (promo.notes) {
+        viewNotes.textContent = promo.notes;
+        viewNotes.hidden = false;
+      } else {
+        viewNotes.hidden = true;
+      }
+      viewUsedToggle.checked = !!promo.redeemed;
+      viewOverlay.hidden = false;
+    }
+    function closeViewModal() {
+      viewOverlay.hidden = true;
+      viewingId = null;
+    }
+
+    // ---------- wiring ----------
+    function bindEvents() {
+      addBtn.addEventListener('click', () => openModal(null));
+      emptyAddBtn.addEventListener('click', () => openModal(null));
+      cancelBtn.addEventListener('click', closeModal);
+      modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
+      modalOverlay.addEventListener('paste', handlePaste);
+      dealForm.addEventListener('submit', handleSubmit);
+      selectImageBtn.addEventListener('click', () => imageInput.click());
+      imageInput.addEventListener('change', handleImageSelection);
+      removeImageBtn.addEventListener('click', () => {
+        pendingImageFile = null;
+        pendingImageRemoved = true;
+        imageInput.value = '';
+        clearPreview();
+      });
+
+      viewCloseBtn.addEventListener('click', closeViewModal);
+      viewOverlay.addEventListener('click', (e) => { if (e.target === viewOverlay) closeViewModal(); });
+      viewEditBtn.addEventListener('click', () => {
+        const promo = promotions.find(p => p.id === viewingId);
+        closeViewModal();
+        if (promo) openModal(promo);
+      });
+      viewDeleteBtn.addEventListener('click', async () => {
+        const id = viewingId;
+        const deleted = await handleDelete(id);
+        if (deleted) closeViewModal();
+      });
+      viewUsedToggle.addEventListener('change', () => {
+        handleToggle(viewingId, viewUsedToggle.checked);
+      });
+
+      confirmCancelBtn.addEventListener('click', () => closeConfirm(false));
+      confirmOkBtn.addEventListener('click', () => closeConfirm(true));
+      confirmOverlay.addEventListener('click', (e) => { if (e.target === confirmOverlay) closeConfirm(false); });
+
+      shareBtn.addEventListener('click', handleShare);
+      exportBtn.addEventListener('click', handleExport);
+      importBtn.addEventListener('click', () => importInput.click());
+      importInput.addEventListener('change', handleImportFile);
+      deleteAllBtn.addEventListener('click', handleDeleteAll);
+
+      shopFilter.addEventListener('change', () => { currentStore = shopFilter.value; renderBoard(); });
+      rankFilter.addEventListener('change', () => { currentRating = rankFilter.value; renderBoard(); });
+      categoryFilter.addEventListener('change', () => { currentCategory = categoryFilter.value; renderBoard(); });
+      endDateFilter.addEventListener('change', () => { currentFilter = endDateFilter.value; renderBoard(); });
+      overviewSort.addEventListener('change', () => { currentSort = overviewSort.value; renderBoard(); });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        if (!confirmOverlay.hidden) closeConfirm(false);
+        else if (!modalOverlay.hidden) closeModal();
+        else if (!viewOverlay.hidden) closeViewModal();
+      });
+
+      viewSwitch.addEventListener('click', (e) => {
+        const btn = e.target.closest('.tab');
+        if (!btn) return;
+        viewSwitch.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+        currentView = btn.dataset.view;
+        renderAll();
+      });
+
+      prevMonthBtn.addEventListener('click', () => {
+        calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1, 1);
+        renderAll();
+      });
+      nextMonthBtn.addEventListener('click', () => {
+        calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 1);
+        renderAll();
+      });
+      todayBtn.addEventListener('click', () => {
+        const n = new Date();
+        calendarMonth = new Date(n.getFullYear(), n.getMonth(), 1);
+        renderAll();
+        requestAnimationFrame(centerCalendarOnToday);
+      });
+
+      grid.addEventListener('click', (e) => {
+        if (e.target.closest('.used-toggle')) return;
+        const card = e.target.closest('[data-action="view"]');
+        if (card) openViewModal(card.dataset.id);
+      });
+      grid.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        if (e.target.closest('.used-toggle')) return;
+        const card = e.target.closest('[data-action="view"]');
+        if (card) { e.preventDefault(); openViewModal(card.dataset.id); }
+      });
+      grid.addEventListener('change', (e) => {
+        const chk = e.target.closest('[data-action="toggle"]');
+        if (chk) handleToggle(chk.dataset.id, chk.checked);
+      });
+
+      calendarGrid.addEventListener('click', (e) => {
+        const bar = e.target.closest('[data-action="view"]');
+        if (bar) openViewModal(bar.dataset.id);
+      });
+    }
+
+    // ---------- init ----------
+    async function init() {
+      bindEvents();
+      try {
+        await loadPromotions();
+      } catch (e) {
+        renderAll();
+        showToast('Could not load the shared board. Try refreshing.');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+
+  <script>
+(function(){
+  // ---------- Price Checker: category configuration ----------
+  const DESC_FIELD = {id:'description', label:'Description (optional, e.g. brand or store)', type:'text', required:false, full:true};
+
+  const CATEGORIES = [
+    {
+      id:'diapers', label:'Diapers', icon:'👶', unitLabel:'€ / diaper', decimals:3,
+      subtypeField:'size', subtypeLabel:'size',
+      fields:[
+        {id:'totalPrice', label:'Total price (€)', type:'number', step:'0.01', min:'0.01'},
+        {id:'amount', label:'Number of diapers in the pack', type:'number', step:'1', min:'1'},
+        {id:'size', label:'Size (e.g. 3, 4, 4+, Newborn)', type:'text'},
+        DESC_FIELD
+      ],
+      compute: v => v.totalPrice / v.amount,
+      historyCols:[
+        {h:'Size', get:e=>e.inputs.size},
+        {h:'Pack', get:e=>e.inputs.amount},
+        {h:'Price', get:e=>fmtEuro(e.inputs.totalPrice,2)}
+      ]
+    },
+    {
+      id:'dishwasher', label:'Dishwasher Tablets', icon:'🍽️', unitLabel:'€ / tablet', decimals:3,
+      subtypeField:'type', subtypeLabel:'type',
+      fields:[
+        {id:'totalPrice', label:'Total price (€)', type:'number', step:'0.01', min:'0.01'},
+        {id:'type', label:'Type', type:'select', options:['All-in-one','Classic']},
+        {id:'amount', label:'Number of tablets in the pack', type:'number', step:'1', min:'1'},
+        DESC_FIELD
+      ],
+      compute: v => v.totalPrice / v.amount,
+      historyCols:[
+        {h:'Type', get:e=>e.inputs.type},
+        {h:'Pack', get:e=>e.inputs.amount},
+        {h:'Price', get:e=>fmtEuro(e.inputs.totalPrice,2)}
+      ]
+    },
+    {
+      id:'toiletpaper', label:'Toilet Paper', icon:'🧻', unitLabel:'€ / 1000 sheets (1-ply)', decimals:2,
+      subtypeField:null,
+      fields:[
+        {id:'totalPrice', label:'Total price (€)', type:'number', step:'0.01', min:'0.01'},
+        {id:'rolls', label:'Number of rolls', type:'number', step:'1', min:'1'},
+        {id:'plies', label:'Plies', type:'number', step:'1', min:'1'},
+        {id:'sheets', label:'Sheets per roll', type:'number', step:'1', min:'1'},
+        DESC_FIELD
+      ],
+      compute: v => (v.totalPrice / (v.rolls * v.sheets * v.plies)) * 1000,
+      historyCols:[
+        {h:'Rolls', get:e=>e.inputs.rolls},
+        {h:'Ply', get:e=>e.inputs.plies},
+        {h:'Sheets/roll', get:e=>e.inputs.sheets},
+        {h:'Price', get:e=>fmtEuro(e.inputs.totalPrice,2)}
+      ]
+    },
+    {
+      id:'kitchentowels', label:'Kitchen Towels', icon:'🧺', unitLabel:'€ / 1000 sheets', decimals:2,
+      subtypeField:null,
+      fields:[
+        {id:'totalPrice', label:'Total price (€)', type:'number', step:'0.01', min:'0.01'},
+        {id:'rolls', label:'Number of rolls', type:'number', step:'1', min:'1'},
+        {id:'plies', label:'Plies', type:'number', step:'1', min:'1'},
+        {id:'sheets', label:'Sheets per roll', type:'number', step:'1', min:'1'},
+        DESC_FIELD
+      ],
+      compute: v => (v.totalPrice / (v.rolls * v.sheets)) * 1000,
+      historyCols:[
+        {h:'Rolls', get:e=>e.inputs.rolls},
+        {h:'Ply', get:e=>e.inputs.plies},
+        {h:'Sheets/roll', get:e=>e.inputs.sheets},
+        {h:'Price', get:e=>fmtEuro(e.inputs.totalPrice,2)}
+      ]
+    },
+    {
+      id:'wetwipes', label:'Wet Wipes', icon:'🧼', unitLabel:'€ / 100 wipes', decimals:2,
+      subtypeField:null,
+      fields:[
+        {id:'totalPrice', label:'Total price (€)', type:'number', step:'0.01', min:'0.01'},
+        {
+          id:'pieces', type:'quantity-toggle', label:'How many wipes?',
+          modes:[
+            {id:'total', label:'Total wipes', fields:[
+              {id:'totalPieces', label:'Total number of wipes', step:'1', min:'1'}
+            ], compute:v => v.totalPieces},
+            {id:'packs', label:'Packs × wipes/pack', fields:[
+              {id:'packs', label:'Number of packs', step:'1', min:'1'},
+              {id:'perPack', label:'Wipes per pack', step:'1', min:'1'}
+            ], compute:v => v.packs * v.perPack}
+          ]
+        },
+        DESC_FIELD
+      ],
+      compute: v => (v.totalPrice / v.pieces) * 100,
+      historyCols:[
+        {h:'Wipes', get:e => {
+          const mode = e.inputs._piecesMode;
+          const raw = e.inputs._piecesRaw || {};
+          if (mode === 'packs') return `${raw.packs} × ${raw.perPack}/pack`;
+          return String(raw.totalPieces != null ? raw.totalPieces : e.inputs.pieces);
+        }},
+        {h:'Price', get:e=>fmtEuro(e.inputs.totalPrice,2)}
+      ]
+    },
+    {
+      id:'detergent', label:'Detergent', icon:'🧴', unitLabel:'€ / load', decimals:3,
+      subtypeField:null,
+      fields:[
+        {id:'totalPrice', label:'Total price (€)', type:'number', step:'0.01', min:'0.01'},
+        {id:'loads', label:'Number of loads / washes', type:'number', step:'1', min:'1'},
+        DESC_FIELD
+      ],
+      compute: v => v.totalPrice / v.loads,
+      historyCols:[
+        {h:'Loads', get:e=>e.inputs.loads},
+        {h:'Price', get:e=>fmtEuro(e.inputs.totalPrice,2)}
+      ]
+    },
+    {
+      id:'coffeecups', label:'Coffee Cups', icon:'<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h11v6a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5V8Z"/><path d="M16 10h1.5a2.5 2.5 0 0 1 0 5H16M8 5c0-1 1-1 1-2m3 2c0-1 1-1 1-2"/></svg>', unitLabel:'€ / cup', decimals:3,
+      subtypeField:null,
+      fields:[
+        {id:'totalPrice', label:'Total price (€)', type:'number', step:'0.01', min:'0.01'},
+        {id:'amount', label:'Number of cups', type:'number', step:'1', min:'1'},
+        DESC_FIELD
+      ],
+      compute: v => v.totalPrice / v.amount,
+      historyCols:[
+        {h:'Cups', get:e=>e.inputs.amount},
+        {h:'Price', get:e=>fmtEuro(e.inputs.totalPrice,2)}
+      ]
+    }
+  ];
+  const CAT_BY_ID = Object.fromEntries(CATEGORIES.map(c => [c.id, c]));
+
+  // ---------- Helpers ----------
+  function fmtEuro(n, decimals){ return '€' + Number(n).toFixed(decimals); }
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  // ---------- Persistent price-check history ----------
+  let allEntries = [];
+  let storageReady = false;
+
+  async function initStorage(){
+    allEntries = await api('/api/price-checks');
+
+    // Carry forward checks saved by the previous browser-only version.
+    let legacyEntries = [];
+    try{ legacyEntries = JSON.parse(localStorage.getItem('priceCheckerEntries') || '[]'); }
+    catch(e){ legacyEntries = []; }
+    if (Array.isArray(legacyEntries) && legacyEntries.length){
+      const migrated = [];
+      for (const entry of legacyEntries){
+        try{ migrated.push(await api('/api/price-checks', {
+          method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(entry)
+        })); }catch(e){ /* Leave local history intact so a later visit can retry. */ }
+      }
+      if (migrated.length === legacyEntries.length) localStorage.removeItem('priceCheckerEntries');
+      allEntries = allEntries.concat(migrated);
+    }
+  }
+
+  async function addEntry(entry){
+    const saved = await api('/api/price-checks', {
+      method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(entry)
+    });
+    allEntries.push(saved);
+  }
+
+  async function deleteEntryById(id){
+    await api('/api/price-checks/' + encodeURIComponent(id), {method:'DELETE'});
+  }
+
+  async function restoreEntry(entry){
+    const restored = await api('/api/price-checks', {
+      method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(entry)
+    });
+    allEntries.push(restored);
+  }
+
+  // ---------- Verdict logic ----------
+  function getHistory(catId, subtypeKey){
+    return allEntries.filter(e => e.category === catId &&
+      (subtypeKey === null || String(e.subtype || '').trim().toLowerCase() === subtypeKey));
+  }
+
+  function computeVerdict(unitPrice, history, cfg, subtype){
+    const scopeNote = (cfg.subtypeField && subtype) ? ` for ${cfg.subtypeLabel} "${subtype}"` : '';
+    if (history.length === 0){
+      return { tag:'First entry', mood:'neutral',
+        detail:`You haven't checked a ${cfg.label.toLowerCase()} price${scopeNote} yet — this one becomes your baseline for next time.` };
+    }
+    const prices = history.map(e => e.unitPrice);
+    const min = Math.min(...prices);
+    const diffPct = Math.round(((unitPrice - min) / min) * 100);
+    if (unitPrice <= min){
+      return { tag:'Best price yet', mood:'good',
+        detail:`Matches or beats every ${cfg.label.toLowerCase()} price you've checked${scopeNote} — your best so far was ${fmtEuro(min, cfg.decimals)}.` };
+    }
+    if (unitPrice <= min * 1.05){
+      return { tag:'Good deal', mood:'good',
+        detail:`Only ${diffPct}% above the cheapest ${cfg.label.toLowerCase()} price you've checked${scopeNote} (${fmtEuro(min, cfg.decimals)}).` };
+    }
+    return { tag:'Not a good deal', mood:'bad',
+      detail:`${diffPct}% above the cheapest ${cfg.label.toLowerCase()} price you've checked${scopeNote} (${fmtEuro(min, cfg.decimals)}).` };
+  }
+
+  // ---------- Rendering ----------
+  let activeCat = CATEGORIES[0].id;
+
+  function renderTabs(){
+    const nav = document.getElementById('pcTabs');
+    nav.innerHTML = CATEGORIES.map(c => `
+      <button class="pc-tab ${c.id === activeCat ? 'active' : ''}" data-cat="${c.id}" role="tab" aria-selected="${c.id === activeCat}">
+        <span class="pc-tab-icon" aria-hidden="true">${c.icon}</span>${c.label}
+      </button>`).join('');
+    nav.querySelectorAll('.pc-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeCat = btn.dataset.cat;
+        renderTabs();
+        renderPanel(activeCat);
+      });
+    });
+  }
+
+  function renderPanel(catId){
+    const cfg = CAT_BY_ID[catId];
+    const panel = document.getElementById('pcPanel');
+    const fieldsHtml = cfg.fields.map(f => {
+      if (f.type === 'quantity-toggle'){
+        const switchHtml = f.modes.map((m,i) => `
+          <label class="pc-mode-option">
+            <input type="radio" name="pcqtymode_${f.id}" value="${m.id}" ${i === 0 ? 'checked' : ''}>
+            <span>${m.label}</span>
+          </label>`).join('');
+        const groupsHtml = f.modes.map((m,i) => `
+          <div class="pc-mode-fields" data-mode="${m.id}" ${i === 0 ? '' : 'style="display:none;"'}>
+            ${m.fields.map(sf => `
+              <label class="pc-field">
+                <span>${sf.label}</span>
+                <input type="number" id="pcf_${f.id}_${m.id}_${sf.id}" step="${sf.step}" min="${sf.min}" inputmode="decimal">
+              </label>`).join('')}
+          </div>`).join('');
+        return `<div class="pc-field-full pc-quantity-toggle" data-toggle-id="${f.id}">
+          <span>${f.label}</span>
+          <div class="pc-mode-switch" role="radiogroup" aria-label="${f.label}">${switchHtml}</div>
+          <div class="pc-mode-fields-wrap">${groupsHtml}</div>
+        </div>`;
+      }
+      const cls = f.full ? 'pc-field pc-field-full' : 'pc-field';
+      if (f.type === 'select'){
+        const opts = f.options.map(o => `<option value="${escapeHtml(o)}">${escapeHtml(o)}</option>`).join('');
+        return `<label class="${cls}"><span>${f.label}</span><select id="pcf_${f.id}">${opts}</select></label>`;
+      }
+      return `<label class="${cls}">
+        <span>${f.label}</span>
+        <input type="${f.type}" id="pcf_${f.id}" ${f.type === 'number' ? `step="${f.step}" min="${f.min}" inputmode="decimal"` : 'autocomplete="off"'}>
+      </label>`;
+    }).join('');
+
+    panel.innerHTML = `
+      <form id="pcEntryForm" novalidate>
+        <div class="pc-field-grid">${fieldsHtml}</div>
+        <p class="pc-form-error" id="pcFormError" role="alert"></p>
+        <button type="submit" class="pc-check-btn" ${storageReady ? '' : 'disabled'}>${storageReady ? 'Check this price' : 'Loading…'}</button>
+      </form>
+      <div id="pcResult" class="pc-result"></div>
+      <div class="pc-divider" aria-hidden="true"></div>
+      <section class="pc-history">
+        <h2>${cfg.label} — prices checked</h2>
+        <div id="pcHistoryBody"></div>
+      </section>
+    `;
+    panel.querySelectorAll('.pc-quantity-toggle').forEach(group => {
+      const toggleId = group.dataset.toggleId;
+      group.querySelectorAll(`input[name="pcqtymode_${toggleId}"]`).forEach(radio => {
+        radio.addEventListener('change', () => {
+          group.querySelectorAll('.pc-mode-fields').forEach(mf => {
+            mf.style.display = (mf.dataset.mode === radio.value) ? '' : 'none';
+          });
+        });
+      });
+    });
+    document.getElementById('pcEntryForm').addEventListener('submit', e => handleSubmit(e, catId));
+    renderHistory(catId);
+  }
+
+  function renderHistory(catId){
+    const cfg = CAT_BY_ID[catId];
+    const entries = allEntries.filter(e => e.category === catId);
+    const body = document.getElementById('pcHistoryBody');
+    if (!body) return;
+
+    if (entries.length === 0){
+      body.innerHTML = `<p class="pc-empty">You haven't checked any ${cfg.label.toLowerCase()} prices yet — enter one above to get started.</p>`;
+      return;
+    }
+
+    let statsHtml = '';
+    const bestIds = new Set();
+
+    if (cfg.subtypeField){
+      const groups = {};
+      entries.forEach(e => {
+        const key = e.subtype || '—';
+        (groups[key] = groups[key] || []).push(e);
+      });
+      const groupKeys = Object.keys(groups).sort((a,b) => a.localeCompare(b));
+      const rows = groupKeys.map(key => {
+        const groupEntries = groups[key];
+        const prices = groupEntries.map(e => e.unitPrice);
+        const avg = prices.reduce((a,b) => a+b, 0) / prices.length;
+        const min = Math.min(...prices);
+        const bestInGroup = groupEntries.reduce((best, e) => (e.unitPrice < best.unitPrice ? e : best), groupEntries[0]);
+        bestIds.add(bestInGroup.id);
+        return `<tr><td>${escapeHtml(key)}</td><td>${prices.length}</td><td>${fmtEuro(avg, cfg.decimals)}</td><td>${fmtEuro(min, cfg.decimals)}</td></tr>`;
+      }).join('');
+      statsHtml = `<table class="pc-stats-table">
+        <thead><tr><th>${cfg.subtypeLabel}</th><th>Checks</th><th>Avg</th><th>Lowest</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+    } else {
+      const prices = entries.map(e => e.unitPrice);
+      const avg = prices.reduce((a,b) => a+b, 0) / prices.length;
+      const min = Math.min(...prices);
+      statsHtml = `<p class="pc-stats-line">${entries.length} prices checked · average ${fmtEuro(avg, cfg.decimals)} · lowest ${fmtEuro(min, cfg.decimals)}</p>`;
+      const bestEntry = entries.reduce((best, e) => (e.unitPrice < best.unitPrice ? e : best), entries[0]);
+      bestIds.add(bestEntry.id);
+    }
+
+    const ordered = [...entries].sort((a, b) =>
+      a.unitPrice - b.unitPrice || b.createdAt - a.createdAt
+    );
+
+    const headCols = cfg.historyCols.map(c => `<th>${c.h}</th>`).join('');
+    const rows = ordered.map(e => {
+      const cols = cfg.historyCols.map(c => `<td>${escapeHtml(String(c.get(e)))}</td>`).join('');
+      const note = e.inputs.description ? e.inputs.description : '—';
+      const date = formatDisplayDate(e.createdAt);
+      const rowClass = bestIds.has(e.id) ? ' class="pc-best-row"' : '';
+      return `<tr${rowClass}>
+        <td>${date}</td>${cols}
+        <td class="pc-unit-col">${fmtEuro(e.unitPrice, cfg.decimals)}</td>
+        <td>${escapeHtml(note)}</td>
+        <td><button class="pc-del-btn" data-id="${e.id}" aria-label="Delete entry">×</button></td>
+      </tr>`;
+    }).join('');
+
+    body.innerHTML = `${statsHtml}
+      <div class="pc-table-wrap">
+        <table class="pc-log-table">
+          <thead><tr><th>Date</th>${headCols}<th>${cfg.unitLabel}</th><th>Note</th><th></th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+
+    body.querySelectorAll('.pc-del-btn').forEach(btn => {
+      btn.addEventListener('click', () => handleDelete(catId, btn.dataset.id));
+    });
+  }
+
+  function readFormValues(cfg){
+    const values = {};
+    for (const f of cfg.fields){
+      if (f.type === 'quantity-toggle'){
+        const checked = document.querySelector(`input[name="pcqtymode_${f.id}"]:checked`);
+        const modeId = checked ? checked.value : f.modes[0].id;
+        const mode = f.modes.find(m => m.id === modeId);
+        const subValues = {};
+        for (const sf of mode.fields){
+          const el = document.getElementById(`pcf_${f.id}_${mode.id}_${sf.id}`);
+          const n = parseFloat(el.value);
+          if (isNaN(n) || n <= 0) return { error: `Enter a valid ${sf.label.toLowerCase()}.` };
+          subValues[sf.id] = n;
+        }
+        values[f.id] = mode.compute(subValues);
+        values['_' + f.id + 'Mode'] = modeId;
+        values['_' + f.id + 'Raw'] = subValues;
+        continue;
+      }
+      const el = document.getElementById('pcf_' + f.id);
+      if (f.type === 'number'){
+        const n = parseFloat(el.value);
+        if (isNaN(n) || n <= 0) return { error: `Enter a valid ${f.label.toLowerCase()}.` };
+        values[f.id] = n;
+      } else {
+        const s = el.value.trim();
+        if (!s && f.required !== false) return { error: `Enter a ${f.label.toLowerCase()}.` };
+        values[f.id] = s;
+      }
+    }
+    return { values };
+  }
+
+  function renderResult(cfg, unitPrice, verdict){
+    const el = document.getElementById('pcResult');
+    el.innerHTML = `
+      <div class="pc-stamp ${verdict.mood}">${verdict.tag}</div>
+      <p class="pc-result-figure">${cfg.unitLabel}: <strong>${fmtEuro(unitPrice, cfg.decimals)}</strong></p>
+      <p class="pc-result-detail">${verdict.detail}</p>
+    `;
+    el.classList.add('visible');
+  }
+
+  async function handleSubmit(evt, catId){
+    evt.preventDefault();
+    if (!storageReady) return;
+    const cfg = CAT_BY_ID[catId];
+    const errorEl = document.getElementById('pcFormError');
+    errorEl.textContent = '';
+
+    const parsed = readFormValues(cfg);
+    if (parsed.error){ errorEl.textContent = parsed.error; return; }
+    const values = parsed.values;
+
+    const unitPrice = cfg.compute(values);
+    if (!isFinite(unitPrice) || unitPrice <= 0){
+      errorEl.textContent = 'Could not calculate a price from those numbers — double check your entries.';
+      return;
+    }
+
+    const subtype = cfg.subtypeField ? String(values[cfg.subtypeField]).trim() : null;
+    const subtypeKey = subtype ? subtype.toLowerCase() : null;
+    const history = getHistory(catId, subtypeKey);
+    const verdict = computeVerdict(unitPrice, history, cfg, subtype);
+    renderResult(cfg, unitPrice, verdict);
+
+    const submitBtn = evt.target.querySelector('button[type=submit]');
+    submitBtn.disabled = true;
+    try{
+      await addEntry({ category: catId, subtype, unitPrice, inputs: values });
+      renderHistory(catId);
+      evt.target.reset();
+    }catch(e){
+      errorEl.textContent = 'The price was calculated, but history could not be saved. Please try again.';
+    }finally{
+      submitBtn.disabled = false;
+    }
+  }
+
+  let undoTimer = null;
+  function showPcToast(message, onUndo){
+    const toast = document.getElementById('pcToast');
+    clearTimeout(undoTimer);
+    toast.innerHTML = `<span>${escapeHtml(message)}</span><button id="pcUndoBtn" type="button">Undo</button>`;
+    toast.classList.add('show');
+    document.getElementById('pcUndoBtn').addEventListener('click', () => {
+      onUndo();
+      toast.classList.remove('show');
+      clearTimeout(undoTimer);
+    });
+    undoTimer = setTimeout(() => toast.classList.remove('show'), 6000);
+  }
+
+  async function handleDelete(catId, id){
+    const idx = allEntries.findIndex(e => e.id === id);
+    if (idx === -1) return;
+    const [removed] = allEntries.splice(idx, 1);
+    renderHistory(catId);
+    try{ await deleteEntryById(id); }
+    catch(e){ allEntries.splice(idx, 0, removed); renderHistory(catId); showPcToast('Could not delete this price check.', () => {}); return; }
+    showPcToast('Price check deleted.', async () => {
+      await restoreEntry(removed);
+      renderHistory(catId);
+    });
+  }
+
+  async function boot(){
+    renderTabs();
+    renderPanel(activeCat);
+    const note = document.getElementById('pcStorageNote');
+    try{
+      await initStorage();
+      storageReady = true;
+      if (note) note.textContent = 'Your price-check history is saved securely with this site.';
+    }catch(e){
+      if (note) note.textContent = 'Price-check history is temporarily unavailable. Refresh to try again.';
+    }
+    renderHistory(activeCat);
+    const btn = document.querySelector('#pcEntryForm .pc-check-btn');
+    if (btn){ btn.disabled = false; btn.textContent = 'Check this price'; }
+  }
+
+  boot();
+})();
+  </script>
+</body>
+</html>
