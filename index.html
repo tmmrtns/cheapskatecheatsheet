@@ -896,6 +896,7 @@
         <button type="button" class="tab" data-view="pricecheck">Price Checker</button>
       </div>
       <div class="toolbar-actions">
+        <button type="button" class="btn-ghost" id="syncBtn"></button>
         <button type="button" class="btn-ghost on-board" id="shareBtn">Share</button>
         <button type="button" class="btn-ghost on-board" id="exportBtn">Export JSON</button>
         <button type="button" class="btn-ghost on-board" id="importBtn">Import JSON</button>
@@ -2007,6 +2008,32 @@
 
       shareBtn.addEventListener('click', handleShare);
       exportBtn.addEventListener('click', handleExport);
+      const syncBtn = document.getElementById('syncBtn');
+      const refreshSyncBtn = () => { syncBtn.textContent = window.localApi.syncing() ? 'Sync: on' : 'Sync: off'; };
+      refreshSyncBtn();
+      syncBtn.addEventListener('click', async () => {
+        const on = window.localApi.syncing();
+        const entered = window.prompt(
+          'Sync deals across devices via GitHub (' + window.localApi.repo() + ', branch "data").\n\n' +
+          'Paste a fine-grained GitHub token with Contents: Read and write on this repo.' +
+          (on ? '\nLeave empty to turn sync off on this device.' : ''), '');
+        if (entered === null) return;
+        try {
+          window.localApi.setToken(entered.trim());
+          if (entered.trim()) {
+            const moved = await window.localApi.uploadLocalData();
+            showToast(moved ? 'Sync on — uploaded ' + moved + ' local item(s).' : 'Sync on.');
+          } else {
+            showToast('Sync off — using this browser only.');
+          }
+          refreshSyncBtn();
+          setTimeout(() => location.reload(), 900);
+        } catch (err) {
+          window.localApi.setToken('');
+          refreshSyncBtn();
+          showToast(err.message || 'Could not connect to GitHub.');
+        }
+      });
       importBtn.addEventListener('click', () => importInput.click());
       importInput.addEventListener('change', handleImportFile);
       deleteAllBtn.addEventListener('click', handleDeleteAll);
@@ -2560,7 +2587,7 @@
     try{
       await initStorage();
       storageReady = true;
-      if (note) note.textContent = 'Your price-check history is saved securely with this site.';
+      if (note) note.textContent = 'Your price-check history is saved ' + (window.localApi.syncing() ? 'in GitHub and shared across your devices.' : 'in this browser only. Use Sync to share it across devices.');
     }catch(e){
       if (note) note.textContent = 'Price-check history is temporarily unavailable. Refresh to try again.';
     }
