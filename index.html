@@ -1095,6 +1095,7 @@
 
   <div class="toast" id="toast" hidden></div>
 
+  <script src="local-api.js"></script>
   <script>
     // ---------- state ----------
     let promotions = [];
@@ -1280,20 +1281,15 @@
       }, nextMidnight.getTime() - Date.now());
     }
 
-    async function api(path, options) {
-      const response = await fetch(path, options);
-      if (!response.ok) {
-        let message = 'Request failed: ' + response.status;
-        try {
-          const body = await response.json();
-          if (body && body.error) message = body.error;
-        } catch (err) { /* keep the status fallback */ }
-        throw new Error(message);
-      }
-      return response.status === 204 ? null : response.json();
-    }
+    const api = window.localApi.api;
+    const imageUrls = {};
     async function loadPromotions() {
       promotions = await api('/api/promotions?today=' + encodeURIComponent(formatISODate(new Date())));
+      for (const promo of promotions) {
+        if (promo.imageKey && !imageUrls[promo.imageKey]) {
+          try { imageUrls[promo.imageKey] = await window.localApi.imageUrl(promo.imageKey); } catch (err) { /* missing image */ }
+        }
+      }
       renderAll();
       scheduleExpirationRefresh();
     }
@@ -1329,7 +1325,7 @@
     }
 
     function imgSrcOf(promo) {
-      return promo.imageKey ? '/api/screenshots/' + encodeURIComponent(promo.imageKey) : null;
+      return promo.imageKey ? (imageUrls[promo.imageKey] || null) : null;
     }
 
     function cardHTML(promo) {
@@ -1807,9 +1803,9 @@
         for (const promo of promotions) {
           let screenshot = null;
           if (promo.imageKey) {
-            const response = await fetch('/api/screenshots/' + encodeURIComponent(promo.imageKey));
-            if (!response.ok) throw new Error('A promotion screenshot could not be included.');
-            const blob = await response.blob();
+            let blob;
+            try { blob = await window.localApi.getImage(promo.imageKey); }
+            catch (err) { throw new Error('A promotion screenshot could not be included.'); }
             screenshot = { type: blob.type, dataUrl: await blobToDataUrl(blob) };
           }
           entries.push({
