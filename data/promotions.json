@@ -68,5 +68,19 @@
   "rank": 3,
   "id": "e7a0ecbc-03b4-4cab-8a24-51af2a1b8e0e",
   "createdAt": 1791112173358
+ },
+ {
+  "shop": "Aronde",
+  "item": "Varkenshaasje",
+  "discount": "8,90 per kg",
+  "category": null,
+  "startDate": "2026-10-01",
+  "endDate": "2026-11-30",
+  "notes": null,
+  "imageKey": "c53dd4c3-f10e-4ae7-84ef-df93dc9521ae.png",
+  "redeemed": false,
+  "rank": 4,
+  "id": "3da88d7d-6206-4854-a825-cdaaaf1b22e9",
+  "createdAt": 1791112113828
  }
 ]
