@@ -1,1 +1,0 @@
-ALTER TABLE "promotions" ADD COLUMN "rank" integer;
