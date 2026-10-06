@@ -104,12 +104,8 @@
 
   // Run fn(list) -> [newList, result] against whichever store is active.
   async function mutate(kind, fn) {
-    const key = kind === 'promos' ? PROMOS_KEY : CHECKS_KEY;
-    if (syncing()) return ghMutate(kind === 'promos' ? 'data/promotions.json' : 'data/price-checks.json', fn, 'Update ' + kind);
-    const list = read(key);
-    const [next, result] = fn(list);
-    if (next !== list) write(key, next);
-    return result;
+    if (!syncing()) throw fail('Please sign in.', 401);
+    return ghMutate(kind === 'promos' ? 'data/promotions.json' : 'data/price-checks.json', fn, 'Update ' + kind);
   }
 
   // ---- screenshots (IndexedDB locally, GitHub files when syncing) ----
@@ -290,5 +286,19 @@
     branchReady = false;
   }
 
-  window.localApi = { api, getImage, imageUrl, syncing, repo, setToken, uploadLocalData };
+  // Log in = prove the token can write to the data repo.
+  async function signIn(value, repoName) {
+    if (!/^[\w.-]+\/[\w.-]+$/.test(repoName)) throw new Error('Repository must look like owner/name.');
+    setToken(value, repoName);
+    try {
+      const res = await gh('');
+      if (res.status === 404) throw new Error('Repository not found, or the token has no access to it.');
+      if (!res.ok) throw new Error('GitHub error ' + res.status);
+      const info = await res.json();
+      if (!info.permissions || !info.permissions.push) throw new Error('The token needs Contents: Read and write on this repository.');
+      await ensureBranch();
+    } catch (e) { setToken(''); throw e; }
+  }
+
+  window.localApi = { signIn, api, getImage, imageUrl, syncing, repo, setToken, uploadLocalData };
 })();
