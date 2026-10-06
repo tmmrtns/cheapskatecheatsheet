@@ -124,5 +124,19 @@
   "rank": 3,
   "id": "c3bdb729-121b-4b5b-9be1-25feea787c61",
   "createdAt": 1791111653615
+ },
+ {
+  "shop": "Lidl BE",
+  "item": "Varkenschipolata",
+  "discount": "5,98 per kg",
+  "category": null,
+  "startDate": "2026-10-12",
+  "endDate": "2026-10-17",
+  "notes": null,
+  "imageKey": "a9f2b54e-6fb7-447b-b448-7d45937de19d.png",
+  "redeemed": false,
+  "rank": 3,
+  "id": "6eb4157f-e3d4-4146-ae04-59654226c444",
+  "createdAt": 1791111460903
  }
 ]
