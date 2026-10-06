@@ -96,5 +96,19 @@
   "rank": 3,
   "id": "8e1382cf-cb5b-453d-bfa7-ab66eab7c416",
   "createdAt": 1791112049710
+ },
+ {
+  "shop": "AH BE",
+  "item": "Gehakt",
+  "discount": "3,75 per kg",
+  "category": null,
+  "startDate": "2026-10-05",
+  "endDate": "2026-10-11",
+  "notes": null,
+  "imageKey": "54484278-3b73-4db0-b0de-9988c3f2f25d.png",
+  "redeemed": false,
+  "rank": 4,
+  "id": "3666498e-b3b5-4c2c-80a3-f24d7b3a7487",
+  "createdAt": 1791111920207
  }
 ]
