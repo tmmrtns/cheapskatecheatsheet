@@ -12,5 +12,19 @@
   "rank": 4,
   "id": "125656d8-0d04-42d6-9d0a-06d8018ac1ca",
   "createdAt": 1791280580238
+ },
+ {
+  "shop": "Aldi NL",
+  "item": "Primitivo Susumaniello",
+  "discount": "4,99",
+  "category": null,
+  "startDate": "2026-10-05",
+  "endDate": "2026-10-11",
+  "notes": null,
+  "imageKey": "5b50bda9-5788-4c7d-af27-e7a386de7e6d.png",
+  "redeemed": false,
+  "rank": 3,
+  "id": "0180f9c3-a956-433a-863d-dc1606b17cf5",
+  "createdAt": 1791113831284
  }
 ]
