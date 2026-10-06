@@ -110,5 +110,19 @@
   "rank": 4,
   "id": "3666498e-b3b5-4c2c-80a3-f24d7b3a7487",
   "createdAt": 1791111920207
+ },
+ {
+  "shop": "Lidl Online",
+  "item": "Soepmaker",
+  "discount": "39,99",
+  "category": null,
+  "startDate": "2026-10-14",
+  "endDate": "2026-10-20",
+  "notes": null,
+  "imageKey": "20b5c03e-8549-4f26-9aea-5d9c49564e03.png",
+  "redeemed": false,
+  "rank": 3,
+  "id": "c3bdb729-121b-4b5b-9be1-25feea787c61",
+  "createdAt": 1791111653615
  }
 ]
