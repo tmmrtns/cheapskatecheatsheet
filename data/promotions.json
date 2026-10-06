@@ -82,5 +82,19 @@
   "rank": 4,
   "id": "3da88d7d-6206-4854-a825-cdaaaf1b22e9",
   "createdAt": 1791112113828
+ },
+ {
+  "shop": "Aronde",
+  "item": "Kalkoenfillet",
+  "discount": "11,65 per kg",
+  "category": null,
+  "startDate": "2026-10-01",
+  "endDate": "2026-11-30",
+  "notes": null,
+  "imageKey": "183c94cc-a29c-4af5-b962-4dc0df03c54c.png",
+  "redeemed": false,
+  "rank": 3,
+  "id": "8e1382cf-cb5b-453d-bfa7-ab66eab7c416",
+  "createdAt": 1791112049710
  }
 ]
