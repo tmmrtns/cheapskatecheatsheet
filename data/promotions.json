@@ -138,5 +138,19 @@
   "rank": 3,
   "id": "6eb4157f-e3d4-4146-ae04-59654226c444",
   "createdAt": 1791111460903
+ },
+ {
+  "shop": "Lidl BE",
+  "item": "Zalmfilet",
+  "discount": "14,99 per kg",
+  "category": null,
+  "startDate": "2026-10-05",
+  "endDate": "2026-10-10",
+  "notes": null,
+  "imageKey": "9778f1dc-7fe8-448b-b1c0-f7baa1912540.png",
+  "redeemed": false,
+  "rank": 3,
+  "id": "e53ac3c3-fdeb-4f83-bd14-e78bef4e0c35",
+  "createdAt": 1791111226120
  }
 ]
