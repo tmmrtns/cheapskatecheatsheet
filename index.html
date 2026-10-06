@@ -881,15 +881,22 @@
   <div id="lockScreen" style="display:none;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center;padding:16px;background:var(--board-bg);">
     <form id="lockForm" style="background:var(--paper);color:var(--ink);border:1px solid var(--paper-border);border-radius:14px;box-shadow:0 8px 30px var(--paper-shadow);padding:24px;width:100%;max-width:380px;display:grid;gap:12px;font-family:'Work Sans',system-ui,sans-serif;">
       <h1 style="margin:0;font-size:1.4rem;">🔒 The Cheapskate Cheat Sheet</h1>
-      <p style="margin:0;font-size:.9rem;color:var(--ink-soft);">Sign in with your GitHub token to unlock your deals.</p>
+      <p style="margin:0;font-size:.9rem;color:var(--ink-soft);">Sign in to unlock your deals.</p>
+      <label style="font-size:.85rem;">Username
+        <input id="lockUser" type="text" autocomplete="username" required style="width:100%;box-sizing:border-box;padding:10px;margin-top:4px;font:inherit;">
+      </label>
+      <label style="font-size:.85rem;">Password
+        <input id="lockPass" type="password" autocomplete="current-password" required style="width:100%;box-sizing:border-box;padding:10px;margin-top:4px;font:inherit;">
+      </label>
+      <label id="lockTokenRow" hidden style="font-size:.85rem;">GitHub token (one-time, to create the account)
+        <input id="lockToken" type="password" autocomplete="off" style="width:100%;box-sizing:border-box;padding:10px;margin-top:4px;font:inherit;">
+      </label>
       <label style="font-size:.85rem;">Data repository (owner/name)
         <input id="lockRepo" type="text" autocomplete="off" required style="width:100%;box-sizing:border-box;padding:10px;margin-top:4px;font:inherit;">
       </label>
-      <label style="font-size:.85rem;">GitHub token
-        <input id="lockToken" type="password" autocomplete="current-password" required style="width:100%;box-sizing:border-box;padding:10px;margin-top:4px;font:inherit;">
-      </label>
       <p id="lockError" role="alert" hidden style="margin:0;color:var(--accent-expiring);font-size:.85rem;"></p>
       <button id="lockBtn" type="submit" style="padding:10px;font:inherit;font-weight:600;background:var(--accent-primary);color:var(--accent-primary-ink);border:0;border-radius:8px;cursor:pointer;">Sign in</button>
+      <button id="lockToggle" type="button" style="background:none;border:0;color:var(--accent-upcoming);font:inherit;font-size:.85rem;cursor:pointer;text-decoration:underline;">First time? Create an account</button>
     </form>
   </div>
 
@@ -2033,20 +2040,35 @@
         lockScreen.style.display = 'flex';
         syncBtn.hidden = true;
         document.getElementById('lockRepo').value = window.localApi.repo();
+        let creating = false;
+        const tokenRow = document.getElementById('lockTokenRow');
+        const lockBtn = document.getElementById('lockBtn');
+        const lockToggle = document.getElementById('lockToggle');
+        lockToggle.addEventListener('click', () => {
+          creating = !creating;
+          tokenRow.hidden = !creating;
+          document.getElementById('lockToken').required = creating;
+          document.getElementById('lockPass').autocomplete = creating ? 'new-password' : 'current-password';
+          lockBtn.textContent = creating ? 'Create account' : 'Sign in';
+          lockToggle.textContent = creating ? 'Already have an account? Sign in' : 'First time? Create an account';
+          document.getElementById('lockError').hidden = true;
+        });
         document.getElementById('lockForm').addEventListener('submit', async event => {
           event.preventDefault();
-          const btn = document.getElementById('lockBtn');
           const err = document.getElementById('lockError');
           err.hidden = true;
-          btn.disabled = true; btn.textContent = 'Signing in…';
+          lockBtn.disabled = true; lockBtn.textContent = creating ? 'Creating…' : 'Signing in…';
+          const user = document.getElementById('lockUser').value, pass = document.getElementById('lockPass').value;
+          const repoName = document.getElementById('lockRepo').value.trim();
           try {
-            await window.localApi.signIn(document.getElementById('lockToken').value.trim(), document.getElementById('lockRepo').value.trim());
+            if (creating) await window.localApi.register(user, pass, document.getElementById('lockToken').value.trim(), repoName);
+            else await window.localApi.login(user, pass, repoName);
             await window.localApi.uploadLocalData(); // carry over anything saved in this browser
             location.reload();
           } catch (e) {
             err.textContent = e.message || 'Could not sign in.';
             err.hidden = false;
-            btn.disabled = false; btn.textContent = 'Sign in';
+            lockBtn.disabled = false; lockBtn.textContent = creating ? 'Create account' : 'Sign in';
           }
         });
       }

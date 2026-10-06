@@ -300,5 +300,49 @@
     } catch (e) { setToken(''); throw e; }
   }
 
-  window.localApi = { signIn, api, getImage, imageUrl, syncing, repo, setToken, uploadLocalData };
+  // ---- accounts: username + password unlock an encrypted copy of the token ----
+  // The token is encrypted (PBKDF2 -> AES-GCM) with the password and stored in
+  // data/vault.json, so any device can sign in with just username + password.
+  const norm = u => u.trim().toLowerCase();
+  async function accountId(repoName, username) {
+    const d = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(repoName + ':' + norm(username)));
+    return Array.from(new Uint8Array(d), x => x.toString(16).padStart(2, '0')).join('');
+  }
+  async function deriveKey(password, salt) {
+    const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: 600000, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+  }
+  async function readVaultPublic(repoName) { // no token needed: the repo is public
+    const res = await fetch('https://api.github.com/repos/' + repoName + '/contents/data/vault.json?ref=' + DATA_BRANCH,
+      { cache: 'no-store', headers: { 'Accept': 'application/vnd.github.raw+json' } });
+    if (res.status === 404) return [];
+    if (!res.ok) throw new Error('Could not reach GitHub (' + res.status + ').');
+    const v = await res.json().catch(() => []);
+    return Array.isArray(v) ? v : [];
+  }
+  async function login(username, password, repoName) {
+    if (!/^[\w.-]+\/[\w.-]+$/.test(repoName)) throw new Error('Repository must look like owner/name.');
+    const id = await accountId(repoName, username);
+    const found = (await readVaultPublic(repoName)).find(e => e.id === id);
+    if (!found) throw new Error('Wrong username or password.');
+    let value;
+    try {
+      const key = await deriveKey(password, fromB64(found.salt));
+      value = new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: fromB64(found.iv) }, key, fromB64(found.data)));
+    } catch (e) { throw new Error('Wrong username or password.'); }
+    await signIn(value, repoName);
+  }
+  async function register(username, password, value, repoName) {
+    if (!username.trim()) throw new Error('Choose a username.');
+    if (password.length < 10) throw new Error('Use a password of at least 10 characters.');
+    await signIn(value, repoName); // proves the token works before it is stored
+    const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
+    const key = await deriveKey(password, salt);
+    const data = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(value)));
+    const id = await accountId(repoName, username);
+    const entry = { id, salt: b64(salt), iv: b64(iv), data: b64(data) };
+    await ghMutate('data/vault.json', list => [list.filter(e => e.id !== id).concat([entry]), 0], 'Update account');
+  }
+
+  window.localApi = { login, register, signIn, api, getImage, imageUrl, syncing, repo, setToken, uploadLocalData };
 })();
